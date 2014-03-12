@@ -2,16 +2,16 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_tbk_webpay'
-  s.version     = '2.1.3'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
+  s.version     = SpreeTBKWebpay::VERSION
+  s.summary     = 'Plugs Webpay Payment Gateway into Spree Stores'
+  s.description = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.required_ruby_version = '>= 1.9.3'
 
-  # s.author    = 'You'
-  # s.email     = 'you@example.com'
+  s.authors     = ["Gonzalo Bulnes, Ignacio Mella, Cristian Carreño, Ignacio Verdejo"]
+  s.email       = ["iverdejo@acid.cl"]
   # s.homepage  = 'http://www.spreecommerce.com'
 
-  #s.files       = `git ls-files`.split("\n")
+  s.files       = `git ls-files`.split("\n")
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_path = 'lib'
   s.requirements << 'none'
@@ -28,4 +28,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'sqlite3'
+
+  s.add_runtime_dependency 'tbk-webpay'
 end

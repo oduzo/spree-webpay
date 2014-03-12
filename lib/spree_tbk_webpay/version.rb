@@ -1,3 +1,3 @@
 module SpreeTBKWebpay
-  VERSION = '2.1.45'
+  VERSION = '2.1.3'
 end
