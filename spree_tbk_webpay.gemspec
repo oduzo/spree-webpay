@@ -2,14 +2,14 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_tbk_webpay'
-  s.version     = SpreeTBKWebpay::VERSION
+  s.version     = '2.1.3'
   s.summary     = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.description = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.required_ruby_version = '>= 1.9.3'
 
-  s.authors     = ["Gonzalo Bulnes, Ignacio Mella, Cristian Carreño, Ignacio Verdejo"]
-  s.email       = ["iverdejo@acid.cl"]
-  # s.homepage  = 'http://www.spreecommerce.com'
+  s.authors     = ["Gonzalo Bulnes, Ignacio Mella, Cristian Carreño, Ignacio Verdejo, Gonzalo Moreno"]
+  s.email       = ["iverdejo@acid.cl, gmoreno@acid.cl"]
+  s.homepage    = 'http://www.acid.cl'
 
   s.files       = `git ls-files`.split("\n")
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
