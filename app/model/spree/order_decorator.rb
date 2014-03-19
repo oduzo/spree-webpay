@@ -10,7 +10,7 @@ module Spree
       go_to_state :address
       go_to_state :delivery
       go_to_state :payment,    if: ->(order) { order.payment_required?              }
-      go_to_state :puntopagos, if: ->(order) { order.has_puntopagos_payment_method? }
+      go_to_state :webpay,     if: ->(order) { order.has_webpay_payment_method? }
       go_to_state :confirm,    if: ->(order) { order.confirmation_required?         }
       go_to_state :complete
       remove_transition from: :delivery, to: :confirm
@@ -19,8 +19,8 @@ module Spree
     # Indica si la orden tiene algun pago con Puntopagos completado con exito
     #
     # Return TrueClass||FalseClass instance
-    def puntopagos_payment_completed?
-      if payments.completed.from_puntopagos.any?
+    def webpay_payment_completed?
+      if payments.completed.from_webpay.any?
         true
       else
         false
@@ -30,21 +30,21 @@ module Spree
     # Indica si la orden tiene asociado un pago por Puntopagos
     #
     # Return TrueClass||FalseClass instance
-    def has_puntopagos_payment_method?
-      payments.from_puntopagos.any?
+    def has_webpay_payment_method?
+      payments.from_webpay.any?
     end
 
     # Devuelvela forma de pago asociada a la order, se extrae desde el ultimo payment
     #
     # Return Spree::PaymentMethod||NilClass instance
     def payment_method
-      has_puntopagos_payment_method? ? payments.from_puntopagos.order(:id).last.payment_method : nil
+      has_webpay_payment_method? ? payments.from_webpay.order(:id).last.payment_method : nil
     end
 
     # Entrega en valor total en un formato compatible con el estandar de Puntopagos
     #
     # Return String instance
-    def puntopagos_amount
+    def webpay_amount
       # TODO - Ver que pasa cuando hay decimales
       "#{total.to_i}.00"
     end

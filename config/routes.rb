@@ -1,10 +1,10 @@
 Spree::Core::Engine.routes.draw do
   # The notification URL
-  post 'spree/webpay/:token/confirmation', to: 'webpay#confirmation', as: :webpay_confirmation
+  post 'spree/webpay/confirmation', to: 'webpay#confirmation', as: :webpay_confirmation
 
   # The success URL
-  get 'spree/webpay/:token/success', to: 'webpay#success', as: :webpay_success
+  post 'spree/webpay/success', to: 'webpay#success', as: :webpay_success
 
   # The failure URL
-  get 'spree/webpay/:token/error', to: 'webpay#error', as: :webpay_error
+  post 'spree/webpay/failure', to: 'webpay#failure', as: :webpay_failure
 end

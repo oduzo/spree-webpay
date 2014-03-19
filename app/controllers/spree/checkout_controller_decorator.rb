@@ -3,30 +3,36 @@ module Spree
     def edit
       @payment = @order.payments.order(:id).last
 
-      
-      redirect_to puntopagos_success_path(@payment.token) and return if @payment and @payment.token? and ['processing', 'completed'].include?(@payment.state)
-      
-      redirect_to puntopagos_error_path(@payment.token) and return if @payment and @payment.token? and @payment.failed? and params[:state] != 'payment'
+      redirect_to webpay_success_path(@payment.token) and return if @payment and @payment.token? and ['processing', 'completed'].include?(@payment.state)
 
-      if params[:state] == Spree::Gateway::Puntopagos::STATE and @order.state == Spree::Gateway::Puntopagos::STATE
+      redirect_to webpay_error_path(@payment.token) and return if @payment and @payment.token? and @payment.failed? and params[:state] != 'payment'
+
+      if params[:state] == Spree::Gateway::WebpayPlus.STATE and @order.state == Spree::Gateway::WebpayPlus.STATE
         payment_method     = @order.payment_method
 
-        trx_id             = @order.id.to_s
+        trx_id             = @payment.trx_id.to_s
         api_payment_method = payment_method.has_preference?(:api_payment_method) ? payment_method.preferred_api_payment_method : nil
-        amount             = @order.puntopagos_amount
-
+        amount             = @order.webpay_amount
+        success_url        = webpay_success_url
+        failure_url        = webpay_failure_url
         provider = payment_method.provider.new
-        response = provider.make_request(trx_id, amount, api_payment_method)
-
-        if response.success?          
-          # TODO - ver si se puede reutilizar el token cuando este ya esta seteado
-          @payment.update_attributes token: response.get_token
-          redirect_to response.payment_process_url
-
-          return
-        else
-          @error = response.get_error
+        response = provider.pay(amount, @order.number, trx_id, success_url, failure_url)
+        respond_to do |format|
+          format.html { render text: response }
         end
+        # if response.success?
+        #   # TODO - ver si se puede reutilizar el token cuando este ya esta seteado
+        #   @payment.update_attributes token: response.get_token
+        #   redirect_to response.payment_process_url
+
+        #   # To clean the Cart
+        #   session[:order_id] = nil
+        #   @current_order     = nil
+
+        #   return
+        # else
+        #   @error = response.get_error
+        # end
       end
     end
   end

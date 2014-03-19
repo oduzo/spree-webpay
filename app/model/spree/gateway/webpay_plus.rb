@@ -1,12 +1,14 @@
 module Spree
   # Gateway for Transbank Webpay Hosted Payment Pages solution
-  class Gateway::Webpay < Gateway
+  class Gateway::WebpayPlus < Gateway
     preference :api_environment,    :string, default: 'sandbox'
     preference :api_key,            :string
     preference :api_secret,        :string
     preference :api_payment_method, :string
 
-    STATE = 'puntopagos'
+    def self.STATE
+      'webpay'
+    end
 
     def payment_profiles_supported?
       false
@@ -17,27 +19,26 @@ module Spree
     end
 
     def provider_class
-      Webpay::Api
+      TBK::Webpay::Payment
     end
 
     def provider
-      ::Webpay::Config.env      = has_preference?(:api_environment) ? preferred_api_environment : 'sandbox'
-      ::Webpay::Config.key      = has_preference?(:api_key)         ? preferred_api_key         : nil
-      ::Webpay::Config.secret   = has_preference?(:api_secret)      ? preferred_api_sercret     : nil
-
       provider_class
     end
 
     def actions
+      raise
       %w{capture}
     end
 
     # Indicates whether its possible to capture the payment
     def can_capture?(payment)
+      raise
       payment.pending? || payment.checkout?
     end
 
     def capture(money_cents, response_code, gateway_options)
+      raise
       gateway_order_id   = gateway_options[:order_id]
       order_number       = gateway_order_id.split('-').first
       payment_identifier = gateway_order_id.split('-').last
@@ -63,11 +64,12 @@ module Spree
     end
 
     def auto_capture?
+      raise
       false
     end
 
     def method_type
-      "Webpay"
+      "webpay"
     end
 
     private

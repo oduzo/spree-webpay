@@ -2,7 +2,7 @@ module SpreeTbkWebpay
   class Engine < Rails::Engine
     require 'spree/core'
     isolate_namespace Spree
-    engine_name 'spree_tbk_webpay'
+    engine_name 'spree_puntopagos'
 
     config.autoload_paths += %W(#{config.root}/lib)
 
@@ -24,7 +24,7 @@ module SpreeTbkWebpay
     config.to_prepare &method(:activate).to_proc
 
     initializer "spree.webpay.payment_methods", :after => "spree.register.payment_methods" do |app|
-      app.config.spree.payment_methods << Spree::Gateway::Webpay
+      app.config.spree.payment_methods << Spree::Gateway::WebpayPlus
     end
   end
 end
