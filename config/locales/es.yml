@@ -1,0 +1,4 @@
+es:
+  spree:
+    order_state:
+      webpay: webpay
