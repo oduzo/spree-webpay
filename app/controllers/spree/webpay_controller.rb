@@ -13,13 +13,9 @@ module Spree
       response, message = provider.confirmation params
 
       # This methods requires the headers as a hash and the params object as a hash
-      if response
-        render :text "ACEPTADO"
-      else
-        Rails.logger.info "Invalid Notification: #{message}"
-        render :text "RECHAZADO"
-      end
-
+      render text: response
+      return
+      
       render nothing: true
     end
 

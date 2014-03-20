@@ -35,7 +35,8 @@ module TBK
         tbk_params.each do |key, value|
           tbk_string_params += "#{key}=#{value}&"
         end
-        Rails.logger.info tbk_string_params
+        
+
         result = RestClient.post cgi_url, tbk_string_params
       end
 
@@ -47,7 +48,7 @@ module TBK
         file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params['TBK_ID_SESION']}.txt"
         tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""
-        params.except(:controller, :action).each do |key, value|
+        params.except(:controller, :action, :current_store_id).each do |key, value|
           mac_string += "#{key}=#{value}&" if key != :controller or key != :action
         end
 
