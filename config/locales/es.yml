@@ -2,3 +2,14 @@ es:
   spree:
     order_state:
       webpay: webpay
+    webpay_redirect: Usted será redirigido a página de pago de Webpay. Después de completar el formulario de pago volverá a la tienda.
+    webpay_try_again_or_later: 'Se ha producido un error, inténtalo de nuevo ó más tarde'
+    webpay_payment_successfully_completed: Pago completado con éxito
+    webpay_payment_process_completed: Proceso de pago completado
+    webpay_payment_incompleted: El pago no se completó
+    purchase_code: Código de compra
+    webpay_payment_with_errors: 'Ha ocurrido un error, inténtalo de nuevo utilizando un métodos de pago diferente.'
+    webpay_thanks: Gracias por su preferencia
+    webpay_payment_registered: Ya hemos registrado el pago de su pedido.
+    webpay_awaiting_confirmation: Estamos esperando la confirmación del pago de su pedido.
+    webpay_captured: "Pago capturado manualmente"

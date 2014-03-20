@@ -60,25 +60,25 @@ module TBK
         accepted = true
         unless check_mac
           accepted = false
-          Rails.logger.debug "Failed check mac"
+          Rails.logger.info "Failed check mac"
         end
 
         # the confirmation is invalid if order_id is unknown
         if not order_exists? params['TBK_ORDEN_COMPRA'], params['TBK_ID_SESION']
           accepted = false
-          Rails.logger.debug "Invalid order_id"
+          Rails.logger.info "Invalid order_id"
         end
 
         # double payment
         if order_paid? params['TBK_ORDEN_COMPRA']
           accepted = false
-          Rails.logger.debug "Double Payment Order #{params['TBK_ORDEN_COMPRA']}"
+          Rails.logger.info "Double Payment Order #{params['TBK_ORDEN_COMPRA']}"
         end
 
         # wrong amount
         if not order_right_amount? params['TBK_ORDEN_COMPRA'], params['TBK_MONTO']
           accepted = false
-          Rails.logger.debug "Wrong amount"
+          Rails.logger.info "Wrong amount"
         end
 
         if accepted
