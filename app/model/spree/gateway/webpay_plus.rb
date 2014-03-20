@@ -61,7 +61,6 @@ module Spree
     end
 
     def auto_capture?
-      raise
       false
     end
 
