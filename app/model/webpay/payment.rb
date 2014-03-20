@@ -35,6 +35,8 @@ module TBK
         tbk_params.each do |key, value|
           tbk_string_params += "#{key}=#{value}&"
         end
+        Rails.logger.info tbk_string_params
+        raise
         result = RestClient.post cgi_url, tbk_string_params
       end
 

@@ -10,7 +10,7 @@ module Spree
     # POST spree/webpay/confirmation
     def confirmation
       provider = @payment_method.provider.new
-      response, message = provider.confirmation?(params)
+      response, message = provider.confirmation params
 
       # This methods requires the headers as a hash and the params object as a hash
       if response
