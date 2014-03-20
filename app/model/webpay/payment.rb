@@ -87,11 +87,9 @@ module TBK
             payment.is_pending = false
             payment.save
           end
-          render text: 'ACEPTADO'
-          return
+          return true
         else
-          render text: 'RECHAZADO'
-          return
+          return false
         end
       end
 

@@ -14,15 +14,10 @@ module Spree
 
       # This methods requires the headers as a hash and the params object as a hash
       if response
-        @payment.update_attributes webpay_params: params.to_hash
-
-        begin
-          @payment.capture!
-        rescue Core::GatewayError => error
-          Rails.logger.error error
-        end
+        render :text "ACEPTADO"
       else
         Rails.logger.info "Invalid Notification: #{message}"
+        render :text "RECHAZADO"
       end
 
       render nothing: true
