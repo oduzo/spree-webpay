@@ -3,7 +3,7 @@ module Spree
     skip_before_filter :verify_authenticity_token
     helper 'spree/checkout'
 
-    before_filter :load_data
+    before_filter :load_data, :except => [:success]
 
     before_filter :ensure_order_not_completed
 
@@ -31,23 +31,19 @@ module Spree
         redirect_to webpay_error_path
         return
       else
-        status = true
-        if status.valid?
-          # Order to next state
-          unless @order.next
-            flash[:error] = @order.errors.full_messages.join("\n")
-            redirect_to checkout_state_path(@order.state) and return
-          end
-
-          if @order.completed?
-            flash.notice = Spree.t(:order_processed_successfully)
-            redirect_to completion_route and return
-          else
-            redirect_to checkout_state_path(@order.state) and return
-          end
-        else
-          redirect_to webpay_failure_path and return
+        # Order to next state
+        unless @order.next
+          flash[:error] = @order.errors.full_messages.join("\n")
+          redirect_to checkout_state_path(@order.state) and return
         end
+
+        if @order.completed?
+          flash.notice = Spree.t(:order_processed_successfully)
+          redirect_to completion_route and return
+        else
+          redirect_to checkout_state_path(@order.state) and return
+        end
+          
       end
     end
 
@@ -62,7 +58,7 @@ module Spree
       end
 
       # reviso si el pago esta completo y lo envio a la vista correcta
-      redirect_to webpay_success_path and return if ['processing', 'completed'].include?(@payment.state)
+      redirect_to webpay_success_path, :TBK_ID_SESION => params[:TBK_ID_SESION] and return if ['processing', 'completed'].include?(@payment.state)
     end
 
     private

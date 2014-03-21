@@ -50,7 +50,6 @@ module Spree
           ActiveMerchant::Billing::Response.new(false, make_failure_message(payment.webpay_params), {}, {})
         end
       else
-        Rails.log.info "TBK_RESPUESTA: #{payment.webpay_params[:TBK_RESPUESTA]}"
         ActiveMerchant::Billing::Response.new(false, "Transacción no aprobada", {}, {})
       end
     end
