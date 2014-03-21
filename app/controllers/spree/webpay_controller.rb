@@ -9,8 +9,10 @@ module Spree
 
     # POST spree/webpay/confirmation
     def confirmation
+      Rails.logger.fatal params
       provider = @payment_method.provider.new
-      response, message = provider.confirmation params
+      Rails.logger.fatal params
+      response = provider.confirmation params
 
       # This methods requires the headers as a hash and the params object as a hash
       render text: response
@@ -69,7 +71,8 @@ module Spree
     private
       # Carga los datos necesarios
       def load_data
-        @payment = Spree::Payment.find_by_token(params[:token])
+        Rails.logger.info params
+        @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
         redirect_to spree.cart_path and return unless @payment

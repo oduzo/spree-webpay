@@ -35,7 +35,7 @@ module TBK
         tbk_params.each do |key, value|
           tbk_string_params += "#{key}=#{value}&"
         end
-        
+
 
         result = RestClient.post cgi_url, tbk_string_params
       end
@@ -45,11 +45,11 @@ module TBK
       #
       # Returns a string redered as text.
       def confirmation params
-        file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params['TBK_ID_SESION']}.txt"
+        file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
         tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""
         params.except(:controller, :action, :current_store_id).each do |key, value|
-          mac_string += "#{key}=#{value}&" if key != :controller or key != :action
+          mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
         end
 
         mac_string.chop!
@@ -62,35 +62,38 @@ module TBK
         accepted = true
         unless check_mac
           accepted = false
+          Rails.logger.info file_path
+          Rails.logger.info tbk_mac_path
+          Rails.logger.info mac_string
           Rails.logger.info "Failed check mac"
         end
 
         # the confirmation is invalid if order_id is unknown
-        if not order_exists? params['TBK_ORDEN_COMPRA'], params['TBK_ID_SESION']
+        if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
           accepted = false
           Rails.logger.info "Invalid order_id"
         end
 
         # double payment
-        if order_paid? params['TBK_ORDEN_COMPRA']
+        if order_paid? params[:TBK_ORDEN_COMPRA]
           accepted = false
-          Rails.logger.info "Double Payment Order #{params['TBK_ORDEN_COMPRA']}"
+          Rails.logger.info "Double Payment Order #{params[:TBK_ORDEN_COMPRA]}"
         end
 
         # wrong amount
-        if not order_right_amount? params['TBK_ORDEN_COMPRA'], params['TBK_MONTO']
+        if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
           accepted = false
           Rails.logger.info "Wrong amount"
         end
 
         if accepted
-          if params['TBK_RESPUESTA'] == "0"
+          if params[:TBK_RESPUESTA] == "0"
             payment.is_pending = false
             payment.save
           end
-          return true
+          return "ACEPTADO"
         else
-          return false
+          return "RECHAZADO"
         end
       end
 
@@ -102,7 +105,7 @@ module TBK
       #
       # Returns a boolean indicating if the order exists and is ready for payment.
       def order_exists?(order_id, session_id)
-        order = Spree::Order.find(order_id)
+        order = Spree::Order.find_by_number(order_id)
         if order.blank?
           return false
         else
@@ -116,7 +119,7 @@ module TBK
       #
       # Returns a boolean indicating if the order is already paid.
       def order_paid? order_id
-        order = Spree::Order.find(order_id)
+        order = Spree::Order.find_by_number(order_id)
         return order.paid?
       end
 
@@ -127,7 +130,7 @@ module TBK
       #
       # Returns a boolean indicating if the order has the same total amount given by Webpay.
       def order_right_amount? order_id, tbk_total_amount
-        order = Spree::Order.find(order_id)
+        order = Spree::Order.find_by_number(order_id)
         if order.blank?
           return false
         else
