@@ -91,7 +91,7 @@ module TBK
             payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
             begin
               payment.capture!
-            rescue Core::GatewayError => error
+            rescue Spree::Core::GatewayError => error
               Rails.logger.error error
             end
           end

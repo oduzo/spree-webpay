@@ -13,7 +13,7 @@ module Spree
       response = provider.confirmation params
 
       @payment.update_attributes webpay_params: params.to_hash
-      
+
       render text: response
       return
       
@@ -28,11 +28,9 @@ module Spree
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
-        redirect_to webpay_error_path(@payment.token)
+        redirect_to webpay_error_path
         return
       else
-        # Consulto la API de Puntopagos para ver el estado de la transaccion
-        # status = @payment.payment_method.provider.new.check_status(@payment.token, @payment.trx_id.to_s, @order.amount)
         status = true
         if status.valid?
           # Order to next state
