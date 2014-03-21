@@ -44,19 +44,14 @@ module Spree
       order   = payment.order
 
       if payment.webpay_params?
-        if payment.webpay_params["TBK_RESPUESTA"] == "0"
+        if payment.webpay_params[:TBK_RESPUESTA] == "0"
           ActiveMerchant::Billing::Response.new(true,  make_success_message(payment.webpay_params), {}, {})
         else
           ActiveMerchant::Billing::Response.new(false, make_failure_message(payment.webpay_params), {}, {})
         end
       else
-        status = provider.check_status(payment.token, order.id.to_s, order.puntopagos_amount)
-
-        if status.valid?
-          ActiveMerchant::Billing::Response.new(true,  "Webpay paid, checked using Webpay::Status class", {}, {})
-        else
-          ActiveMerchant::Billing::Response.new(false, status.error, {}, {})
-        end
+        Rails.log.info "TBK_RESPUESTA: #{payment.webpay_params[:TBK_RESPUESTA]}"
+        ActiveMerchant::Billing::Response.new(false, "Transacción no aprobada", {}, {})
       end
     end
 
@@ -70,11 +65,11 @@ module Spree
 
     private
     def make_success_message webpay_params
-      webpay_params[:medio_pago_descripcion]
+      "#{webpay_params[:TBK_ORDEN_COMPRA]} - Código Autorización: #{webpay_params[:TBK_CODIGO_AUTORIZACION]}"
     end
 
     def make_failure_message webpay_params
-      webpay_params[:error]
+      webpay_params[:TBK_CODIGO_AUTORIZACION]
     end
   end
 end

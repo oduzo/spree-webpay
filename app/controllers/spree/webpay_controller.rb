@@ -13,7 +13,7 @@ module Spree
       response = provider.confirmation params
 
       @payment.update_attributes webpay_params: params.to_hash
-
+      
       render text: response
       return
       
