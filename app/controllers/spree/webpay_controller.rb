@@ -3,7 +3,7 @@ module Spree
     skip_before_filter :verify_authenticity_token
     helper 'spree/checkout'
 
-    before_filter :load_data, :except => [:success]
+    before_filter :load_data
 
     before_filter :ensure_order_not_completed
 

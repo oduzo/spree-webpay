@@ -1,10 +1,6 @@
 module Spree
   # Gateway for Transbank Webpay Hosted Payment Pages solution
   class Gateway::WebpayPlus < Gateway
-    preference :api_environment,    :string, default: 'sandbox'
-    preference :api_key,            :string
-    preference :api_secret,        :string
-    preference :api_payment_method, :string
 
     def self.STATE
       'webpay'
@@ -44,7 +40,7 @@ module Spree
       order   = payment.order
 
       if payment.webpay_params?
-        if payment.webpay_params[:TBK_RESPUESTA] == "0"
+        if payment.webpay_params["TBK_RESPUESTA"] == "0"
           ActiveMerchant::Billing::Response.new(true,  make_success_message(payment.webpay_params), {}, {})
         else
           ActiveMerchant::Billing::Response.new(false, make_failure_message(payment.webpay_params), {}, {})
