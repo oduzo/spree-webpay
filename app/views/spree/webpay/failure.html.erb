@@ -7,19 +7,19 @@
   </div>
 
   <div class="row" data-hook="checkout_content">
-    <div class="columns alpha twelve" data-hook="puntopagos_field_wrapper">
+    <div class="columns alpha twelve" data-hook="webpay_field_wrapper">
         <fieldset id="billing" data-hook>
           <legend align="center"><%= Spree.t(:payment_information) %></legend>
 
-          <h1><%= Spree.t(:puntopagos_payment_incompleted) %></h1>
+          <h1><%= Spree.t(:webpay_payment_incompleted) %></h1>
 
-          <p><%= Spree.t(:puntopagos_payment_with_errors) %></p>
+          <p><%= Spree.t(:webpay_payment_with_errors) %></p>
 
-          <h2><%= Spree.t(:puntopagos_code) %></h2>
+          <h2><%= Spree.t(:webpay_code) %></h2>
 
           <p>
             <strong>
-              <%= @order.token %>
+              <%= @order.number %>
             </strong>
           </p>
         </fieldset>

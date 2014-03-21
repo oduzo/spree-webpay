@@ -88,6 +88,7 @@ module TBK
 
         if accepted
           if params[:TBK_RESPUESTA] == "0"
+            payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
             payment.is_pending = false
             payment.save
           end

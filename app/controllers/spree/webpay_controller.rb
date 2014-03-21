@@ -9,12 +9,11 @@ module Spree
 
     # POST spree/webpay/confirmation
     def confirmation
-      Rails.logger.fatal params
       provider = @payment_method.provider.new
-      Rails.logger.fatal params
       response = provider.confirmation params
 
-      # This methods requires the headers as a hash and the params object as a hash
+      @payment.update_attributes webpay_params: params.to_hash
+
       render text: response
       return
       
@@ -49,7 +48,7 @@ module Spree
             redirect_to checkout_state_path(@order.state) and return
           end
         else
-          redirect_to puntopagos_error_path(@payment.token) and return
+          redirect_to webpay_failure_path and return
         end
       end
     end
@@ -65,7 +64,7 @@ module Spree
       end
 
       # reviso si el pago esta completo y lo envio a la vista correcta
-      redirect_to webpay_success_path(@payment.token) and return if ['processing', 'completed'].include?(@payment.state)
+      redirect_to webpay_success_path and return if ['processing', 'completed'].include?(@payment.state)
     end
 
     private

@@ -8,7 +8,7 @@ es:
     webpay_payment_process_completed: Proceso de pago completado
     webpay_payment_incompleted: El pago no se completó
     purchase_code: Código de compra
-    webpay_payment_with_errors: 'Ha ocurrido un error, inténtalo de nuevo utilizando un métodos de pago diferente.'
+    webpay_payment_with_errors: 'Ha ocurrido un error, inténtalo de nuevo utilizando un método de pago diferente.'
     webpay_thanks: Gracias por su preferencia
     webpay_payment_registered: Ya hemos registrado el pago de su pedido.
     webpay_awaiting_confirmation: Estamos esperando la confirmación del pago de su pedido.
