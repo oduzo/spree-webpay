@@ -2,6 +2,7 @@
 ==============
 
 This is a integration of the [Acid Labs TBK Gem](https://github.com/acidlabs/tbk-webpay) into Spree Gateways.
+Supports [Spree Multidomain](https://github.com/acidlabs/spree-multi-domain)
 
 ## Requirements
 

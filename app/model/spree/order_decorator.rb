@@ -16,7 +16,7 @@ module Spree
       remove_transition from: :delivery, to: :confirm
     end
 
-    # Indica si la orden tiene algun pago con Puntopagos completado con exito
+    # Indica si la orden tiene algun pago con Webpay completado con exito
     #
     # Return TrueClass||FalseClass instance
     def webpay_payment_completed?
@@ -27,7 +27,7 @@ module Spree
       end
     end
 
-    # Indica si la orden tiene asociado un pago por Puntopagos
+    # Indica si la orden tiene asociado un pago por Webpay
     #
     # Return TrueClass||FalseClass instance
     def has_webpay_payment_method?
@@ -41,7 +41,7 @@ module Spree
       has_webpay_payment_method? ? payments.from_webpay.order(:id).last.payment_method : nil
     end
 
-    # Entrega en valor total en un formato compatible con el estandar de Puntopagos
+    # Entrega en valor total en un formato compatible con el estandar de Webpay
     #
     # Return String instance
     def webpay_amount

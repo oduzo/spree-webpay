@@ -58,6 +58,7 @@ module Spree
       "webpay"
     end
 
+    #TODO: Make administrable
     def payment_method_logo
       "http://www.puntopagos.com/content/mp3.gif"
     end
