@@ -58,13 +58,21 @@ module Spree
       "webpay"
     end
 
+    def payment_method_logo
+      if has_preference?(:api_payment_method) and preferred_api_payment_method.present?
+        "http://www.puntopagos.com/content/mp3.gif"
+      else
+        nil
+      end
+    end
+
     private
     def make_success_message webpay_params
-      "#{webpay_params[:TBK_ORDEN_COMPRA]} - Código Autorización: #{webpay_params[:TBK_CODIGO_AUTORIZACION]}"
+      "#{webpay_params['TBK_ORDEN_COMPRA']} - Código Autorización: #{webpay_params['TBK_CODIGO_AUTORIZACION']}"
     end
 
     def make_failure_message webpay_params
-      webpay_params[:TBK_CODIGO_AUTORIZACION]
+      webpay_params["TBK_CODIGO_AUTORIZACION"]
     end
   end
 end
