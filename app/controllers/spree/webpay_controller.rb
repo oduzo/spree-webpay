@@ -9,10 +9,9 @@ module Spree
 
     # POST spree/webpay/confirmation
     def confirmation
+      @payment.update_attributes webpay_params: params.to_hash
       provider = @payment_method.provider.new
       response = provider.confirmation params
-
-      @payment.update_attributes webpay_params: params.to_hash
 
       render text: response
       return
@@ -28,7 +27,7 @@ module Spree
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
-        redirect_to webpay_error_path
+        redirect_to webpay_failure_path
         return
       else
         # Order to next state

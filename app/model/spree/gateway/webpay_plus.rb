@@ -46,7 +46,7 @@ module Spree
           ActiveMerchant::Billing::Response.new(false, make_failure_message(payment.webpay_params), {}, {})
         end
       else
-        ActiveMerchant::Billing::Response.new(false, "Transacción no aprobada", {}, {})
+        ActiveMerchant::Billing::Response.new(false, "Transacción no aprobada #{payment.webpay_params}", {}, {})
       end
     end
 
@@ -59,11 +59,7 @@ module Spree
     end
 
     def payment_method_logo
-      if has_preference?(:api_payment_method) and preferred_api_payment_method.present?
-        "http://www.puntopagos.com/content/mp3.gif"
-      else
-        nil
-      end
+      "http://www.puntopagos.com/content/mp3.gif"
     end
 
     private
