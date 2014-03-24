@@ -58,13 +58,12 @@ module Spree
       end
 
       # reviso si el pago esta completo y lo envio a la vista correcta
-      redirect_to webpay_success_path, :TBK_ID_SESION => params[:TBK_ID_SESION] and return if ['processing', 'completed'].include?(@payment.state)
+      # RestClient.post webpay_success_path, :TBK_ID_SESION => params[:TBK_ID_SESION] and return if ['processing', 'completed'].include?(@payment.state)
     end
 
     private
       # Carga los datos necesarios
       def load_data
-        Rails.logger.info params
         @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
