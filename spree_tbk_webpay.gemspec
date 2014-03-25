@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_tbk_webpay'
-  s.version     = '2.1.4.20'
+  s.version     = '1.0.0'
   s.summary     = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.description = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.required_ruby_version = '>= 1.9.3'
