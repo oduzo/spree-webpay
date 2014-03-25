@@ -5,16 +5,9 @@ module Spree
       payments.select{ |payment| payment.checkout? or payment.completed? }
     end
 
-    # Se re-define el checkout flow
-    checkout_flow do
-      go_to_state :address
-      go_to_state :delivery
-      go_to_state :payment,    if: ->(order) { order.payment_required?              }
-      go_to_state :webpay,     if: ->(order) { order.has_webpay_payment_method? }
-      go_to_state :confirm,    if: ->(order) { order.confirmation_required?         }
-      go_to_state :complete
-      remove_transition from: :delivery, to: :confirm
-    end
+    # Step only visible when payment failure
+    insert_checkout_step :webpay, :after => :payment
+    remove_transition from: :payment, to: :complete
 
     # Indica si la orden tiene algun pago con Webpay completado con exito
     #
