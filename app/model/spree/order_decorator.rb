@@ -6,7 +6,7 @@ module Spree
     end
 
     # Step only visible when payment failure
-    if self.has_webpay_payment_method?
+    if has_webpay_payment_method?
       insert_checkout_step :webpay, :after => :payment 
       remove_transition from: :payment, to: :complete
     end
