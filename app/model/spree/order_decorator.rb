@@ -6,9 +6,11 @@ module Spree
     end
 
     # Step only visible when payment failure
-    insert_checkout_step :webpay, :after => :payment if: ->(order) { order.has_webpay_payment_method? }
-    remove_transition from: :payment, to: :complete
-
+    if self.has_webpay_payment_method?
+      insert_checkout_step :webpay, :after => :payment 
+      remove_transition from: :payment, to: :complete
+    end
+    
     # Indica si la orden tiene algun pago con Webpay completado con exito
     #
     # Return TrueClass||FalseClass instance
