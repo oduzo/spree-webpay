@@ -56,6 +56,11 @@ module Spree
         @current_order     = @order
       end
 
+      unless ['processing', 'failed'].include?(@payment.state)
+        @payment.started_processing!
+        @payment.failure!
+      end
+
       # reviso si el pago esta completo y lo envio a la vista correcta
       # RestClient.post webpay_success_path, :TBK_ID_SESION => params[:TBK_ID_SESION] and return if ['processing', 'completed'].include?(@payment.state)
     end

@@ -97,6 +97,10 @@ module TBK
           end
           return "ACEPTADO"
         else
+          unless ['processing', 'failed'].include?(payment.state)
+            payment.started_processing!
+            payment.failure!
+          end
           return "RECHAZADO"
         end
       end

@@ -6,10 +6,10 @@ module Spree
     end
 
     # Step only visible when payment failure
-    if has_webpay_payment_method?
-      insert_checkout_step :webpay, :after => :payment 
-      remove_transition from: :payment, to: :complete
-    end
+    
+    insert_checkout_step :webpay, :after => :payment, if: Proc.new {|order| order.has_webpay_payment_method?}
+    remove_transition from: :payment, to: :complete,  if: Proc.new {|order| order.has_webpay_payment_method?}
+    
     
     # Indica si la orden tiene algun pago con Webpay completado con exito
     #
@@ -26,14 +26,14 @@ module Spree
     #
     # Return TrueClass||FalseClass instance
     def has_webpay_payment_method?
-      payments.from_webpay.any?
+      payments.valid.from_webpay.any?
     end
 
     # Devuelvela forma de pago asociada a la order, se extrae desde el ultimo payment
     #
     # Return Spree::PaymentMethod||NilClass instance
-    def payment_method
-      has_webpay_payment_method? ? payments.from_webpay.order(:id).last.payment_method : nil
+    def webpay_payment_method
+      has_webpay_payment_method? ? payments.valid.from_webpay.order(:id).last.payment_method : nil
     end
 
     # Entrega en valor total en un formato compatible con el estandar de Webpay
