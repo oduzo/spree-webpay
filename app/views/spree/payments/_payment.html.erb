@@ -28,17 +28,12 @@
       <dt><%= Spree.t("webpay_payments_quota") %></dt>
       <dd><%= payment.webpay_params['TBK_NUMERO_CUOTAS'] %></dd>
 
-      <dt><%= Spree.t("webpay_payment_type") %></dt>
-      <dd><%= payment.webpay_quota_type %></dd>
-
       <dt><%= Spree.t("webpay_auth_code") %></dt>
       <dd><%= payment.webpay_params['TBK_CODIGO_AUTORIZACION'] %></dd>
 
       <dt>ID Transacción:</dt>
       <dd><%= payment.webpay_params['TBK_ID_TRANSACCION'] %></dd>
 
-      <dt>ID Transacción:</dt>
-      <dd><%= payment.webpay_params['TBK_ID_TRANSACCION'] %></dd>
     </dl>
   <% else %>
     <%= content_tag(:span, payment.payment_method.name) %>

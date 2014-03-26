@@ -12,7 +12,7 @@ module Spree
       "XXXX XXXX XXXX #{webpay_params['TBK_FINAL_NUMERO_TARJETA']}"
     end
 
-    def quota_type
+    def webpay_quota_type
       case webpay_params["TBK_TIPO_PAGO"]
       when "VN"
         return "Sin Cuotas"

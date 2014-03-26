@@ -58,6 +58,14 @@ module Spree
       "webpay"
     end
 
+    def credit(money, credit_card, response_code, options = {})
+      ActiveMerchant::Billing::Response.new(true, '#{Spree::Gateway::Puntopagos.to_s}: Forced success', {}, {})
+    end
+
+    def void(response_code, options = {})
+      ActiveMerchant::Billing::Response.new(true, '#{Spree::Gateway::Puntopagos.to_s}: Forced success', {}, {})
+    end
+
     #TODO: Make administrable
     def payment_method_logo
       "http://www.puntopagos.com/content/mp3.gif"
