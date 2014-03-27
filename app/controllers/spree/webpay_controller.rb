@@ -19,7 +19,7 @@ module Spree
       render nothing: true
     end
 
-    # GET spree/webpay/success
+    # GET/POST spree/webpay/success
     def success
       # To clean the Cart
       session[:order_id] = nil
@@ -27,7 +27,7 @@ module Spree
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
-        RestClient.post webpay_failure_url, params
+        redirect_to webpay_failure_path(params)
         return
       else
         # Order to next state
@@ -49,19 +49,6 @@ module Spree
     # GET spree/webpay/failure
     def failure
       @order = Spree::Order.find_by_number(params[:TBK_ORDEN_COMPRA])
-      @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
-
-      unless @order.completed?
-        # To restore the Cart
-        session[:order_id] = @order.id
-        @current_order     = @order
-      end
-
-      unless ['processing', 'failed'].include?(@payment.state)
-        @payment.started_processing!
-        @payment.failure!
-      end
-
     end
 
     private
@@ -70,7 +57,8 @@ module Spree
         @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
-        RestClient.post webpay_failure_url, params and return unless @payment
+        redirect_to webpay_failure_path(params) and return unless @payment
+
         @payment_method = @payment.payment_method
         @order          = @payment.order
       end

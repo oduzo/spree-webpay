@@ -4,7 +4,9 @@ Spree::Core::Engine.routes.draw do
 
   # The success URL
   post 'spree/webpay/success', to: 'webpay#success', as: :webpay_success
+  get 'spree/webpay/success', to: 'webpay#success', as: :webpay_success
 
   # The failure URL
   post 'spree/webpay/failure', to: 'webpay#failure', as: :webpay_failure
+  get 'spree/webpay/failure', to: 'webpay#failure', as: :webpay_failure
 end
