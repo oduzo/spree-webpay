@@ -27,7 +27,7 @@ module Spree
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
-        RestClient.post webpay_failure_path, params
+        RestClient.post webpay_failure_url, params
         return
       else
         # Order to next state
@@ -62,8 +62,6 @@ module Spree
         @payment.failure!
       end
 
-      # reviso si el pago esta completo y lo envio a la vista correcta
-      # RestClient.post webpay_success_path, :TBK_ID_SESION => params[:TBK_ID_SESION] and return if ['processing', 'completed'].include?(@payment.state)
     end
 
     private
@@ -72,7 +70,7 @@ module Spree
         @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
-        RestClient.post webpay_failure_path, params and return unless @payment
+        RestClient.post webpay_failure_url, params and return unless @payment
         @payment_method = @payment.payment_method
         @order          = @payment.order
       end
