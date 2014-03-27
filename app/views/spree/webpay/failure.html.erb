@@ -11,17 +11,21 @@
         <fieldset id="billing" data-hook>
           <legend align="center"><%= Spree.t(:payment_information) %></legend>
 
-          <h1><%= Spree.t(:webpay_payment_incompleted) %></h1>
+          <h1><%= "#{Spree.t(:webpay_payment_incompleted)} Nº #{@order.number}" %></h1>
+          <hr class="clear" />
+          <p>Las posibles causas de este rechazo son:</p>
 
-          <p><%= Spree.t(:webpay_payment_with_errors) %></p>
-
-          <h2><%= Spree.t(:purchase_code) %></h2>
-
-          <p>
-            <strong>
-              <%= @order.number %>
-            </strong>
-          </p>
+          <ul>
+            <li>
+              <span>Error en el ingreso de los datos de su tarjeta de crédito o Debito (fecha y/o código de seguridad).</span>
+            </li>
+            <li>
+              <span>Su tarjeta de crédito o debito no cuenta con el cupo necesario para cancelar la compra.</span>
+            </li>
+            <li>
+              <span>Tarjeta aún no habilitada en el sistema financiero. </span>
+            </li>
+          </ul>
         </fieldset>
 
         <hr class="clear" />

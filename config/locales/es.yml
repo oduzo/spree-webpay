@@ -6,7 +6,7 @@ es:
     webpay_try_again_or_later: 'Se ha producido un error, inténtalo de nuevo ó más tarde'
     webpay_payment_successfully_completed: Pago completado con éxito
     webpay_payment_process_completed: Proceso de pago completado
-    webpay_payment_incompleted: El pago no se completó
+    webpay_payment_incompleted: Transacción Fracasada
     purchase_code: Código de compra
     webpay_payment_with_errors: 'Ha ocurrido un error, inténtalo de nuevo utilizando un método de pago diferente.'
     webpay_thanks: Gracias por su preferencia

@@ -3,9 +3,9 @@ module Spree
     skip_before_filter :verify_authenticity_token
     helper 'spree/checkout'
 
-    before_filter :load_data
+    before_filter :load_data, :except => [:failure]
 
-    before_filter :ensure_order_not_completed
+    # before_filter :ensure_order_not_completed
 
     # POST spree/webpay/confirmation
     def confirmation
@@ -27,7 +27,7 @@ module Spree
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
-        redirect_to webpay_failure_path
+        RestClient.post webpay_failure_path, params
         return
       else
         # Order to next state
@@ -48,7 +48,8 @@ module Spree
 
     # GET spree/webpay/failure
     def failure
-      # TODO - quiza aca se puede pasar el pago a :failure
+      @order = Spree::Order.find_by_number(params[:TBK_ORDEN_COMPRA])
+      @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
       unless @order.completed?
         # To restore the Cart
@@ -71,12 +72,10 @@ module Spree
         @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
-        redirect_to spree.cart_path and return unless @payment
-
+        RestClient.post webpay_failure_path, params and return unless @payment
         @payment_method = @payment.payment_method
         @order          = @payment.order
       end
-
 
       # Same as CheckoutController#ensure_order_not_completed
       def ensure_order_not_completed
