@@ -5,14 +5,12 @@ module Spree
 
     before_filter :load_data, :except => [:failure]
 
-    before_filter :ensure_order_not_completed, :except => [:failure]
-
     # POST spree/webpay/confirmation
     def confirmation
       if @payment.blank?
         render text: "RECHAZADO"
       end
-      
+
       @payment.update_attributes webpay_params: params.to_hash
       provider = @payment_method.provider.new
       response = provider.confirmation params
@@ -66,11 +64,6 @@ module Spree
           @payment_method = @payment.payment_method
           @order          = @payment.order
         end
-      end
-
-      # Same as CheckoutController#ensure_order_not_completed
-      def ensure_order_not_completed
-        redirect_to webpay_failure_path(params) if @order.completed?
       end
 
       # Same as CheckoutController#completion_route
