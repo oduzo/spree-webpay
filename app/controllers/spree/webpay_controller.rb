@@ -5,7 +5,7 @@ module Spree
 
     before_filter :load_data, :except => [:failure]
 
-    # before_filter :ensure_order_not_completed
+    before_filter :ensure_order_not_completed, :except => [:failure]
 
     # POST spree/webpay/confirmation
     def confirmation
@@ -65,7 +65,7 @@ module Spree
 
       # Same as CheckoutController#ensure_order_not_completed
       def ensure_order_not_completed
-        redirect_to spree.cart_path if @order.completed?
+        redirect_to webpay_failure_path(params) if @order.completed?
       end
 
       # Same as CheckoutController#completion_route
