@@ -9,6 +9,10 @@ module Spree
 
     # POST spree/webpay/confirmation
     def confirmation
+      if @payment.blank?
+        render text: "RECHAZADO"
+      end
+      
       @payment.update_attributes webpay_params: params.to_hash
       provider = @payment_method.provider.new
       response = provider.confirmation params
@@ -57,10 +61,11 @@ module Spree
         @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
-        redirect_to webpay_failure_path(params) and return unless @payment
-
-        @payment_method = @payment.payment_method
-        @order          = @payment.order
+        # redirect_to webpay_failure_path(params) and return unless @payment
+        unless @payment.blank?
+          @payment_method = @payment.payment_method
+          @order          = @payment.order
+        end
       end
 
       # Same as CheckoutController#ensure_order_not_completed

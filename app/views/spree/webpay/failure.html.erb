@@ -3,7 +3,7 @@
 
   <div class="row" data-hook="checkout_header">
     <h1 class="columns three alpha" data-hook="checkout_title"><%= Spree.t(:checkout) %></h1>
-    <div class="columns thirteen omega" data-hook="checkout_progress"><%= checkout_progress %></div>
+    <div class="columns thirteen omega" data-hook="checkout_progress"><%= checkout_progress unless @order.blank? %></div>
   </div>
 
   <div class="row" data-hook="checkout_content">
@@ -11,7 +11,7 @@
         <fieldset id="billing" data-hook>
           <legend align="center"><%= Spree.t(:payment_information) %></legend>
 
-          <h1><%= "#{Spree.t(:webpay_payment_incompleted)} Nº #{@order.number}" %></h1>
+          <h1><%= "#{Spree.t(:webpay_payment_incompleted)} Nº #{params[:TBK_ORDEN_COMPRA]}" %></h1>
           <hr class="clear" />
           <p>Las posibles causas de este rechazo son:</p>
 
@@ -35,12 +35,14 @@
           <script>Spree.disableSaveOnClick();</script>
         </div>
     </div>
-
-    <% if @order.state != 'confirm' %>
-      <div id="checkout-summary" data-hook="checkout_summary_box" class="columns omega four">
-        <%= render :partial => 'spree/checkout/summary', :locals => { :order => @order } %>
-      </div>
+    <% unless @order.blank? %>
+      <% if @order.state != 'confirm' %>
+        <div id="checkout-summary" data-hook="checkout_summary_box" class="columns omega four">
+          <%= render :partial => 'spree/checkout/summary', :locals => { :order => @order } %>
+        </div>
+      <% end %>
     <% end %>
+    
   </div>
 
 </div>
