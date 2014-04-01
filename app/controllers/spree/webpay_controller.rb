@@ -9,6 +9,7 @@ module Spree
     def confirmation
       if @payment.blank?
         render text: "RECHAZADO"
+        return
       end
 
       @payment.update_attributes webpay_params: params.to_hash
