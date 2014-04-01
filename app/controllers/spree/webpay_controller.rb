@@ -30,20 +30,13 @@ module Spree
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
-        redirect_to webpay_failure_path(params)
-        return
+        redirect_to webpay_failure_path(params) and return
       else
-        # Order to next state
-        unless @order.next
-          flash[:error] = @order.errors.full_messages.join("\n")
-          redirect_to checkout_state_path(@order.state) and return
-        end
-
         if @order.completed?
           flash.notice = Spree.t(:order_processed_successfully)
           redirect_to completion_route and return
         else
-          redirect_to checkout_state_path(@order.state) and return
+          redirect_to webpay_failure_path(params) and return
         end
           
       end
