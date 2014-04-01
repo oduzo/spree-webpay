@@ -4,6 +4,10 @@
 This is a integration of the [Acid Labs TBK Gem](https://github.com/acidlabs/tbk-webpay) into Spree Gateways.
 Supports [Spree Multidomain](https://github.com/acidlabs/spree-multi-domain)
 
+## Disclaimer
+
+This extension was created for multi-domain spree
+
 ## Requirements
 
 * Install in your project the e-commerce Connection Kit (KCC) from Transbank
