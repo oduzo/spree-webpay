@@ -11,7 +11,7 @@
   	<dd><%= @order.number %></dd>
 
     <dt>TBK_ID_SESION</dt>
-    <dd><%= @order.payments.valid.from_webpay.order(:id).last %></dd>
+    <dd><%= @order.payments.valid.from_webpay.order(:id).last.trx_id %></dd>
 
   	<dt>TBK_MONTO: </dt>
   	<dd><%= @order.webpay_amount %></dd>
