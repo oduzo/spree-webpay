@@ -14,10 +14,25 @@
   <% if payment.webpay? %>
     <dl>
       <dt><%= Spree.t("webpay_name_store") %></dt>
-      <dd><%= order.store.name rescue Spree::Config.site_name %></dd>
+      <dd><%= order.store.name rescue current_store.name %></dd>
 
       <dt><%= Spree.t("webpay_store_url") %></dt>
       <dd><%= order.store.default_domain rescue Spree::Config.site_url %></dd>
+
+      <dt><%= Spree.t("webpay_buyer_name") %></dt>
+      <dd><%= order.webpay_client_name %></dd>
+
+      <dt><%= Spree.t("webpay_trx_type") %></dt>
+      <dd><%= Spree.t("webpay_sale") %></dd>
+
+      <dt><%= Spree.t("webpay_order_number") %></dt>
+      <dd><%= payment.webpay_params['TBK_ORDEN_COMPRA'] %></dd>
+
+      <dt><%= Spree.t("webpay_trx_date") %></dt>
+      <dd><%= order.completed_at.to_s(:db) %></dd>
+
+      <dt><%= Spree.t("webpay_payment_type") %></dt>
+      <dd><%= payment.webpay_quota_type %></dd>
 
       <dt><%= Spree.t("webpay_payments_quota_type") %></dt>
       <dd><%= payment.webpay_quota_type %></dd>
@@ -30,9 +45,6 @@
 
       <dt><%= Spree.t("webpay_auth_code") %></dt>
       <dd><%= payment.webpay_params['TBK_CODIGO_AUTORIZACION'] %></dd>
-
-      <dt>ID Transacción:</dt>
-      <dd><%= payment.webpay_params['TBK_ID_TRANSACCION'] %></dd>
 
     </dl>
   <% else %>

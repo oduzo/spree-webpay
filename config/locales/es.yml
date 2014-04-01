@@ -14,10 +14,16 @@ es:
     webpay_awaiting_confirmation: Estamos esperando la confirmación del pago de su pedido.
     webpay_captured: "Pago capturado manualmente"
     #Success
-    webpay_payment_type: "Tipo de transacción"
+    webpay_buyer_name: "Nombre de Comprador"
+    webpay_trx_date: "Fecha de transacción"
+    webpay_trx_type: "Tipo de transacción"
+    webpay_order_number: "Número de Orden"
+    webpay_payment_type: "Tipo de pago realizado"
     webpay_auth_code: "Código de Autorización"
     webpay_card_number: "Número de Tarjeta"
     webpay_payments_quota: "Cantidad de Cuotas"
     webpay_payments_quota_type: "Tipo de Cuotas"
     webpay_name_store: "Nombre Comercio"
     webpay_store_url: "Url Comercio"
+    webpay_sale: "Venta"
+    webpay_paid: "Pago"
