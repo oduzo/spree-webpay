@@ -100,8 +100,12 @@ module TBK
           return "ACEPTADO"
         else
           unless ['processing', 'failed'].include?(payment.state)
-            payment.started_processing!
-            payment.failure!
+            begin
+              payment.started_processing!
+              payment.failure!
+            rescue Spree::Core::GatewayError => error
+              Rails.logger.error error
+            end            
           end
           return "RECHAZADO"
         end

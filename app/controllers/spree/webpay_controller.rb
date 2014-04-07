@@ -27,6 +27,8 @@ module Spree
       # To clean the Cart
       session[:order_id] = nil
       @current_order     = nil
+      
+      redirect_to root_path and return if @payment.blank?
 
       if @payment.failed?
         # reviso si el pago esta fallido y lo envio a la vista correcta
