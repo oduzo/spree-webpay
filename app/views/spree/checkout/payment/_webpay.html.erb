@@ -10,10 +10,8 @@
   	<dt>TBK_ORDEN_COMPRA: </dt>
   	<dd><%= @order.number %></dd>
     
-    <% if @order.payments.valid.from_webpay.order(:id).any? %>
-      <dt>TBK_ID_SESION</dt>
-      <dd><%= Digest::MD5.hexdigest("#{@order.number}#{@order.payments.count}") %></dd>
-    <% end %>
+    <dt>TBK_ID_SESION</dt>
+    <dd><%= Digest::MD5.hexdigest("#{@order.number}#{@order.payments.count}") %></dd>
 
   	<dt>TBK_MONTO: </dt>
   	<dd><%= @order.webpay_amount %></dd>

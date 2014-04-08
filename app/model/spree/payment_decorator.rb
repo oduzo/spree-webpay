@@ -51,18 +51,14 @@ module Spree
       #
       # Returns Token.
       def set_webpay_trx_id
-        self.webpay_trx_id ||= generate_trx_id
+        self.webpay_trx_id ||= generate_webpay_trx_id
       end
 
       # Public: Genera el trx_id unico.
       #
       # Returns generated trx_id.
-      def generate_trx_id
-        while true
-          generated_webpay_trx_id = Digest::MD5.hexdigest("#{order.number}#{order.payments.count}")
-
-          return generated_webpay_trx_id unless Spree::Payment.exists?(webpay_trx_id: generated_webpay_trx_id)
-        end
+      def generate_webpay_trx_id
+        Digest::MD5.hexdigest("#{self.order.number}#{self.order.payments.count}")
       end
   end
 end

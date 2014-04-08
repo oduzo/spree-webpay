@@ -46,13 +46,13 @@ module Spree
 
     # GET spree/webpay/failure
     def failure
-      @order = Spree::Order.find_by_number(params[:TBK_ORDEN_COMPRA])
+      @order = Spree::Order.find_by(number: params[:TBK_ORDEN_COMPRA])
     end
 
     private
       # Carga los datos necesarios
       def load_data
-        @payment = Spree::Payment.find_by_webpay_trx_id(params[:TBK_ID_SESION])
+        @payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
         # redirect_to webpay_failure_path(params) and return unless @payment
