@@ -2,7 +2,7 @@ module Spree
   Payment.class_eval do
     scope :from_webpay, -> { joins(:payment_method).where(spree_payment_methods: {type: Spree::Gateway::WebpayPlus.to_s}) }
 
-    after_initialize :set_trx_id
+    after_initialize :set_webpay_trx_id
 
     def webpay?
       self.payment_method.type == "Spree::Gateway::WebpayPlus"
@@ -50,8 +50,8 @@ module Spree
       # Public: Setea un trx_id unico.
       #
       # Returns Token.
-      def set_trx_id
-        self.trx_id ||= generate_trx_id
+      def set_webpay_trx_id
+        self.webpay_trx_id ||= generate_trx_id
       end
 
       # Public: Genera el trx_id unico.
@@ -59,9 +59,9 @@ module Spree
       # Returns generated trx_id.
       def generate_trx_id
         while true
-          generated_trx_id = Time.now.to_i
+          generated_webpay_trx_id = Digest::MD5.hexdigest("#{order.number}#{order.payments.count}")
 
-          return generated_trx_id unless Spree::Payment.exists?(trx_id: generated_trx_id)
+          return generated_webpay_trx_id unless Spree::Payment.exists?(webpay_trx_id: generated_webpay_trx_id)
         end
       end
   end

@@ -45,7 +45,7 @@ module TBK
       #
       # Returns a string redered as text.
       def confirmation params
-        payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
+        payment = Spree::Payment.find_by_webpay_trx_id(params[:TBK_ID_SESION])
         file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
         tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""

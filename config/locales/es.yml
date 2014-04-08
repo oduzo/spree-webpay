@@ -21,7 +21,7 @@ es:
     webpay_payment_type: "Tipo de pago realizado"
     webpay_auth_code: "Código de Autorización"
     webpay_card_number: "Número de Tarjeta"
-    webpay_payments_quota: "Cantidad de Cuotas"
+    webpay_payments_quota: "Número de Cuotas"
     webpay_payments_quota_type: "Tipo de Cuotas"
     webpay_name_store: "Nombre Comercio"
     webpay_store_url: "Url Comercio"

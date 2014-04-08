@@ -52,7 +52,7 @@ module Spree
     private
       # Carga los datos necesarios
       def load_data
-        @payment = Spree::Payment.find_by_trx_id(params[:TBK_ID_SESION])
+        @payment = Spree::Payment.find_by_webpay_trx_id(params[:TBK_ID_SESION])
 
         # Verifico que se encontro el payment
         # redirect_to webpay_failure_path(params) and return unless @payment
