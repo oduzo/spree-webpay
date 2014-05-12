@@ -5,7 +5,7 @@ module Spree
 
       if params[:state] == Spree::Gateway::WebpayPlus.STATE and @order.state == Spree::Gateway::WebpayPlus.STATE
         payment_method     = @order.webpay_payment_method
-        config ||= TBK::Webpay::Config.new(Rails.env)
+        config ||= TBK::Webpay::Config.new
 
         trx_id             = @payment.webpay_trx_id
         amount             = @order.webpay_amount

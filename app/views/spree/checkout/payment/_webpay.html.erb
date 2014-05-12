@@ -1,6 +1,6 @@
 <p>
   <%= Spree.t(:webpay_redirect) %>
-  <% config ||= TBK::Webpay::Config.new(Rails.env)%>
+  <% config ||= TBK::Webpay::Config.new %>
 </p>
 <% unless Rails.env.production? %>
   Parámetros a enviar a CGI pagos:
