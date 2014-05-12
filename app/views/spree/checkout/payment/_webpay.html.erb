@@ -1,5 +1,6 @@
 <p>
   <%= Spree.t(:webpay_redirect) %>
+  <% config ||= TBK::Webpay::Config.new(Rails.env)%>
 </p>
 <% unless Rails.env.production? %>
   Parámetros a enviar a CGI pagos:
@@ -17,9 +18,9 @@
   	<dd><%= @order.webpay_amount %></dd>
 
   	<dt>TBK_URL_FRACASO</dt>
-  	<dd><%= webpay_failure_url(:protocol => "http") %></dd>
+  	<dd><%= webpay_failure_url(config.tbk_webpay_protocol) %></dd>
 
   	<dt>TBK_URL_EXITO</dt>
-  	<dd><%= webpay_success_url(:protocol => "http") %></dd>
+  	<dd><%= webpay_success_url(config.tbk_webpay_protocol) %></dd>
   </dl>
 <% end %>
