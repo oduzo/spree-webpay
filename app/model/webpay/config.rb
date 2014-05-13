@@ -33,6 +33,7 @@ module TBK
         config = YAML.load_file(@config_filepath)[rails_env]
         @tbk_webpay_cgi_base_url = config['cgi_base_url']
         @tbk_webpay_tbk_root_path = config['tbk_root_path']
+        @tbk_webpay_protocol = config['protocol']
       end
     end
   end
