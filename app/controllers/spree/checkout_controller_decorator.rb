@@ -9,8 +9,8 @@ module Spree
 
         trx_id             = @payment.webpay_trx_id
         amount             = @order.webpay_amount
-        success_url        = webpay_success_url(config.tbk_webpay_protocol)
-        failure_url        = webpay_failure_url(config.tbk_webpay_protocol)
+        success_url        = webpay_success_url(:protocol => config.tbk_webpay_protocol)
+        failure_url        = webpay_failure_url(:protocol => config.tbk_webpay_protocol)
         provider = payment_method.provider.new
         response = provider.pay(amount, @order.number, trx_id, success_url, failure_url)
         
