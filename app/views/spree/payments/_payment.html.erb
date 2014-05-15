@@ -14,7 +14,7 @@
   <% if payment.webpay? %>
     <dl>
       <dt><%= Spree.t("webpay_name_store") %></dt>
-      <dd><%= @order.store.name rescue current_store.name %></dd>
+      <dd><%= @order.store.name rescue Spree::Config.site_name %></dd>
 
       <dt><%= Spree.t("webpay_store_url") %></dt>
       <dd><%= @order.store.default_domain rescue Spree::Config.site_url %></dd>
