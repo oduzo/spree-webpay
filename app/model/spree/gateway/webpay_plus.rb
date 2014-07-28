@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Spree
   # Gateway for Transbank Webpay Hosted Payment Pages solution
   class Gateway::WebpayPlus < Gateway

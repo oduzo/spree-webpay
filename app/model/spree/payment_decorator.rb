@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Spree
   Payment.class_eval do
     scope :from_webpay, -> { joins(:payment_method).where(spree_payment_methods: {type: Spree::Gateway::WebpayPlus.to_s}) }
