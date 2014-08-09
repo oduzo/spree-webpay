@@ -2,7 +2,7 @@ module SpreeTbkWebpay
   class Engine < Rails::Engine
     require 'spree/core'
     isolate_namespace Spree
-    engine_name 'spree_puntopagos'
+    engine_name 'spree_tbk_webpay'
 
     config.autoload_paths += %W(#{config.root}/lib)
 
