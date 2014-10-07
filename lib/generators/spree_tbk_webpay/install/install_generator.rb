@@ -5,7 +5,7 @@ module SpreeTbkWebpay
       class_option :auto_run_migrations, :type => :boolean, :default => false
 
       def add_stylesheets
-        inject_into_file 'vendor/assets/stylesheets/spree/backend/all.css', " *= require admin/spree_tbk_webpay\n", :before => /\*\//, :verbose => true
+        inject_into_file 'vendor/assets/stylesheets/spree/backend/all.css', " *= require backend/spree_tbk_webpay\n", :before => /\*\//, :verbose => true
       end
 
       def add_migrations
