@@ -61,65 +61,65 @@ module TBK
           # Nothing for now
         end
 
-        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Inicio")
+        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Inicio")
 
         mac_string.chop!
         File.open file_path, 'w+' do |file|
             file.write(mac_string)
         end
 
-        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Check Mac: #{mac_string}")
+        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Mac: #{mac_string}")
 
         check_mac = system(tbk_mac_path.to_s, file_path.to_s)
 
         accepted = true
         unless check_mac
           accepted = false
-          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Failed check mac: #{mac_string}, #{file_path}, #{tbk_mac_path}")
+          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Failed check mac: #{mac_string}, #{file_path}, #{tbk_mac_path}")
         end
 
-        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Check Order exists")
+        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Order exists")
         # the confirmation is invalid if order_id is unknown
         if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
           accepted = false
-          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Fail Check Order")
+          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order")
         end
 
-        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Check Order Paid?")
+        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Order Paid?")
         # double payment
         if order_paid? params[:TBK_ORDEN_COMPRA]
           accepted = false
-          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Fail Check Order Paid?")
+          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order Paid?")
         end
 
-        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Check Order Amount")
+        Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Order Amount")
         # wrong amount
         if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
           accepted = false
-          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Fail Check Order Amount")
+          Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order Amount")
         end
 
         if accepted
-          Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Accepted ")
+          Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Accepted ")
           if params[:TBK_RESPUESTA] == "0"
-            Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] TBK_RESPUESTA: #{params[:TBK_RESPUESTA]} ")
+            Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] TBK_RESPUESTA: #{params[:TBK_RESPUESTA]} ")
             order = payment.order
             begin
               payment.capture!
               order.next! unless order.completed?
             rescue Spree::Core::GatewayError => error
-              Rails.logger.send("#{logfile}").error("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Error: #{error} ")
+              Rails.logger.send("#{logfile}").error("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Error: #{error} ")
             end
           end
           return "ACEPTADO"
         else
-          Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Rejected ")
+          Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Rejected ")
           unless ['processing', 'failed', 'invalid'].include?(payment.state)
             begin
               payment.started_processing!
               payment.failure!
             rescue Spree::Core::GatewayError => error
-              Rails.logger.send("#{logfile}").error("[#{params[:TBK_ORDEN_COMPRA]} order.try(:state)] Error: #{error} ")
+              Rails.logger.send("#{logfile}").error("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Error: #{error} ")
             end
           end
           return "RECHAZADO"
