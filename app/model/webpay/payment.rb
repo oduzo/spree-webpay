@@ -20,20 +20,8 @@ module TBK
       # session_id - integer - The user session id.
       #
       # Returns a REST response to be rendered by the application
-      def pay tbk_total_price, order_id, session_id, result_url, failure_url
-        tbk_params = {
-          'TBK_TIPO_TRANSACCION' => 'TR_MALL',
-          'TBK_MONTO' => tbk_total_price,
-          'TBK_ORDEN_COMPRA' => order_id,
-          'TBK_ID_SESION' => session_id,
-          'TBK_URL_RESULTADO' => result_url,
-          'TBK_URL_FRACASO' => failure_url,
-          'TBK_CODIGO_TIENDA_M001' => TBK::Webpay::Config.store_code,
-          'TBK_NUMERO_CUOTAS_M001' => 1,
-          'TBK_MONTO_CUOTA_M001' => tbk_total_price,
-          'TBK_MONTO_TIENDA_M001' => tbk_total_price,
-          'TBK_ORDEN_TIENDA_M001' => order_id
-        }
+      def pay tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
+        tbk_params = tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
 
         cgi_url = "#{@@config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
 
@@ -44,6 +32,23 @@ module TBK
         end
 
         result = RestClient.post cgi_url, tbk_string_params
+      end
+
+      def tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
+        {
+          'TBK_TIPO_TRANSACCION' => 'TR_MALL',
+          'TBK_MONTO' => tbk_total_price,
+          'TBK_ORDEN_COMPRA' => order_id,
+          'TBK_ID_SESION' => trx_id,
+          'TBK_URL_RESULTADO' => result_url,
+          'TBK_URL_FRACASO' => failure_url,
+          'TBK_CODIGO_TIENDA_M001' => TBK::Webpay::Config.store_code,
+          'TBK_NUMERO_CUOTAS_M001' => 1,
+          'TBK_MONTO_CUOTA_M001' => tbk_total_price,
+          'TBK_MONTO_TIENDA_M001' => tbk_total_price,
+          'TBK_ORDEN_TIENDA_M001' => order_id,
+          'TBK_NUM_TRX' => payment_id
+        }
       end
 
       # Public: Confirmation callback executed from Webpay servers.

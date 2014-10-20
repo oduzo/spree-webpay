@@ -13,7 +13,7 @@ module Spree
         result_url         = webpay_result_url(protocol: config.tbk_webpay_protocol)
         failure_url        = webpay_failure_url(protocol: config.tbk_webpay_protocol)
         provider = payment_method.provider.new
-        response = provider.pay(amount, @order.number, trx_id, result_url, failure_url)
+        response = provider.pay(amount, @order.number, trx_id, result_url, failure_url, @payment.id)
 
         respond_to do |format|
           format.html { render text: response }
