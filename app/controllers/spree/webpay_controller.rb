@@ -22,6 +22,11 @@ module Spree
       render nothing: true
     end
 
+    # GET/POST spree/webpay/result
+    def result
+
+    end
+
     # GET/POST spree/webpay/success
     def success
       # To clean the Cart
