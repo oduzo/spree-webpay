@@ -44,7 +44,7 @@ module Spree
       order   = payment.order
 
       if payment.webpay_params?
-        if payment.webpay_params["TBK_RESPUESTA"] == "0"
+        if payment.webpay_params["TBK_COD_RESP_M001"] == "0"
           ActiveMerchant::Billing::Response.new(true,  make_success_message(payment.webpay_params), {}, {})
         else
           ActiveMerchant::Billing::Response.new(false, make_failure_message(payment.webpay_params), {}, {})

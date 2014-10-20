@@ -20,7 +20,7 @@ module TBK
       # session_id - integer - The user session id.
       #
       # Returns a REST response to be rendered by the application
-      def pay tbk_total_price, order_id, session_id, success_url, failure_url
+      def pay tbk_total_price, order_id, session_id, result_url, failure_url
         tbk_params = {
           'TBK_TIPO_TRANSACCION' => 'TR_MALL',
           'TBK_MONTO' => tbk_total_price,
@@ -28,7 +28,11 @@ module TBK
           'TBK_ID_SESION' => session_id,
           'TBK_URL_RESULTADO' => result_url,
           'TBK_URL_FRACASO' => failure_url,
-          'TBK_CODIGO_TIENDA_M001' => TBK::Webpay::Config.store_code
+          'TBK_CODIGO_TIENDA_M001' => TBK::Webpay::Config.store_code,
+          'TBK_NUMERO_CUOTAS_M001' => 1,
+          'TBK_MONTO_CUOTA_M001' => tbk_total_price,
+          'TBK_MONTO_TIENDA_M001' => tbk_total_price,
+          'TBK_ORDEN_TIENDA_M001' => order_id
         }
 
         cgi_url = "#{@@config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
@@ -38,7 +42,6 @@ module TBK
         tbk_params.each do |key, value|
           tbk_string_params += "#{key}=#{value}&"
         end
-
 
         result = RestClient.post cgi_url, tbk_string_params
       end
@@ -91,7 +94,7 @@ module TBK
         end
 
         if accepted
-          if params[:TBK_RESPUESTA] == "0"
+          if params[:TBK_COD_RESP_M001] == "0"
             order = payment.order
             begin
               payment.capture!
@@ -108,7 +111,7 @@ module TBK
               payment.failure!
             rescue Spree::Core::GatewayError => error
               Rails.logger.error error
-            end            
+            end
           end
           return "RECHAZADO"
         end

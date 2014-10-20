@@ -4,7 +4,15 @@ module TBK
   module Webpay
     class Config
       attr_accessor :config_filepath, :tbk_webpay_cgi_base_url, :tbk_webpay_tbk_root_path, :tbk_webpay_protocol
-      attr_accessor :store_code
+
+      @@store_code  = ''
+
+      def self.store_code= value
+        @@store_code = value
+      end
+      def self.store_code
+        @@store_code
+      end
 
       # Public: Loads the configuration file tbk-webpay.yml
       # If it's a rails application it will take the file from the config/ directory
