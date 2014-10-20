@@ -2,6 +2,7 @@
 module Spree
   # Gateway for Transbank Webpay Hosted Payment Pages solution
   class Gateway::WebpayPlus < Gateway
+    preference :store_code, :string
 
     def self.STATE
       'webpay'
@@ -20,6 +21,8 @@ module Spree
     end
 
     def provider
+      ::TBK::Webpay::Config.store_code      = has_preference?(:store_code) ? preferred_store_code : nil
+
       provider_class
     end
 
