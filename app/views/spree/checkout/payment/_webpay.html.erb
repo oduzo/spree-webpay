@@ -4,14 +4,15 @@
 
 <% unless Rails.env.production? %>
   <%
+    payment = @order.payments.order(:id).last
     payment_method  = @order.webpay_payment_method
     provider        = payment_method.provider
 
-    trx_id          = @payment.webpay_trx_id
+    trx_id          = payment.webpay_trx_id
     amount          = @order.webpay_amount
     result_url      = webpay_result_url(protocol: provider.config.tbk_webpay_protocol)
     failure_url     = webpay_failure_url(protocol: provider.config.tbk_webpay_protocol)
-    tbk_params_hash = provider.tbk_params_hash(amount, @order.number, trx_id, result_url, failure_url, @payment.id)
+    tbk_params_hash = provider.tbk_params_hash(amount, @order.number, trx_id, result_url, failure_url, payment.id)
   %>
 
   Parámetros a enviar a CGI pagos:
