@@ -13,12 +13,12 @@ module Spree
       end
 
       @payment.update_attributes webpay_params: params.to_hash
-      provider = @payment_method.provider.new
+      provider = @payment_method.provider
       response = provider.confirmation params
 
       render text: response
       return
-      
+
       render nothing: true
     end
 
@@ -32,7 +32,7 @@ module Spree
       # To clean the Cart
       session[:order_id] = nil
       @current_order     = nil
-      
+
       redirect_to root_path and return if @payment.blank?
 
       if @payment.failed?
@@ -45,7 +45,6 @@ module Spree
         else
           redirect_to webpay_failure_path(params) and return
         end
-          
       end
     end
 

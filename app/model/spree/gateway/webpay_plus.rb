@@ -21,9 +21,7 @@ module Spree
     end
 
     def provider
-      ::TBK::Webpay::Config.store_code      = has_preference?(:store_code) ? preferred_store_code : nil
-
-      provider_class
+      provider_class.new preferred_store_code
     end
 
     def actions

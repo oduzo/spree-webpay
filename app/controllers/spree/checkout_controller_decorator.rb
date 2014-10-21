@@ -6,13 +6,13 @@ module Spree
 
       if params[:state] == Spree::Gateway::WebpayPlus.STATE and @order.state == Spree::Gateway::WebpayPlus.STATE
         payment_method     = @order.webpay_payment_method
-        config ||= TBK::Webpay::Config.new
+        provider           = payment_method.provider
 
-        trx_id             = @payment.webpay_trx_id
         amount             = @order.webpay_amount
-        result_url         = webpay_result_url(protocol: config.tbk_webpay_protocol)
-        failure_url        = webpay_failure_url(protocol: config.tbk_webpay_protocol)
-        provider = payment_method.provider.new
+        trx_id             = @payment.webpay_trx_id
+        result_url         = webpay_result_url(protocol: provider.config.tbk_webpay_protocol)
+        failure_url        = webpay_failure_url(protocol: provider.config.tbk_webpay_protocol)
+
         response = provider.pay(amount, @order.number, trx_id, result_url, failure_url, @payment.id)
 
         respond_to do |format|

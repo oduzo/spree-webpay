@@ -3,14 +3,16 @@ require 'rest_client'
 module TBK
   module Webpay
     class Payment
+      attr_accessor :config
       # Public: Loads the configuration file tbk-webpay.yml
       # If it's a rails application it will take the file from the config/ directory
       #
       # env - Environment.
       #
       # Returns a Config object.
-      def initialize env = nil
-        @@config ||= TBK::Webpay::Config.new(env)
+      def initialize store_code, env = nil
+        self.config = TBK::Webpay::Config.new(env)
+        self.config.store_code = store_code
       end
 
       # Public: Initial communication from the application to Webpay servers
@@ -23,7 +25,7 @@ module TBK
       def pay tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
         tbk_params = tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
 
-        cgi_url = "#{@@config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
+        cgi_url = "#{config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
 
         tbk_string_params = ""
 
@@ -42,7 +44,7 @@ module TBK
           'TBK_ID_SESION' => trx_id,
           'TBK_URL_RESULTADO' => result_url,
           'TBK_URL_FRACASO' => failure_url,
-          'TBK_CODIGO_TIENDA_M001' => TBK::Webpay::Config.store_code,
+          'TBK_CODIGO_TIENDA_M001' => config.store_code,
           'TBK_NUMERO_CUOTAS_M001' => 1,
           'TBK_MONTO_CUOTA_M001' => tbk_total_price,
           'TBK_MONTO_TIENDA_M001' => tbk_total_price,
@@ -57,8 +59,8 @@ module TBK
       # Returns a string redered as text.
       def confirmation params
         payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
-        file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
-        tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
+        file_path = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
+        tbk_mac_path = "#{config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""
         params.except(:controller, :action, :current_store_id).each do |key, value|
           mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
