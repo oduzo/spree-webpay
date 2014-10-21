@@ -50,7 +50,7 @@ module TBK
           'TBK_URL_RESULTADO' => result_url,
           'TBK_URL_FRACASO' => failure_url,
           'TBK_CODIGO_TIENDA_M001' => config.store_code,
-          'TBK_NUMERO_CUOTAS_M001' => 1,
+          'TBK_NUMERO_CUOTAS_M001' => '01',
           'TBK_MONTO_CUOTA_M001' => tbk_total_price,
           'TBK_MONTO_TIENDA_M001' => tbk_total_price,
           'TBK_ORDEN_TIENDA_M001' => order_id,
