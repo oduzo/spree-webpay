@@ -22,8 +22,8 @@ module TBK
       # session_id - integer - The user session id.
       #
       # Returns a REST response to be rendered by the application
-      def pay tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
-        tbk_params = tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
+      def pay tbk_total_price, order_id, trx_id, result_url, failure_url
+        tbk_params = tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url
 
         cgi_url = "#{config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
 
@@ -36,7 +36,7 @@ module TBK
         result = RestClient.post cgi_url, tbk_string_params
       end
 
-      def tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url, payment_id
+      def tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url
         {
           'TBK_TIPO_TRANSACCION' => 'TR_MALL',
           'TBK_MONTO' => tbk_total_price,
@@ -49,7 +49,7 @@ module TBK
           'TBK_MONTO_CUOTA_M001' => tbk_total_price,
           'TBK_MONTO_TIENDA_M001' => tbk_total_price,
           'TBK_ORDEN_TIENDA_M001' => order_id,
-          'TBK_NUM_TRX' => payment_id
+          'TBK_NUM_TRX' => 100
         }
       end
 
