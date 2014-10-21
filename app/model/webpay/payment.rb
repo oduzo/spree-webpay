@@ -33,6 +33,11 @@ module TBK
           tbk_string_params += "#{key}=#{value}&"
         end
 
+        Rails.logger.info '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+        Rails.logger.info cgi_url
+        Rails.logger.info tbk_string_params
+        Rails.logger.info '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+
         result = RestClient.post cgi_url, tbk_string_params
       end
 
@@ -49,7 +54,7 @@ module TBK
           'TBK_MONTO_CUOTA_M001' => tbk_total_price,
           'TBK_MONTO_TIENDA_M001' => tbk_total_price,
           'TBK_ORDEN_TIENDA_M001' => order_id,
-          'TBK_NUM_TRX' => 100
+          'TBK_NUM_TRX' => 1
         }
       end
 
