@@ -24,7 +24,23 @@ module Spree
 
     # GET/POST spree/webpay/result
     def result
+      # To clean the Cart
+      session[:order_id] = nil
+      @current_order     = nil
 
+      redirect_to root_path and return if @payment.blank?
+
+      if @payment.failed?
+        # reviso si el pago esta fallido y lo envio a la vista correcta
+        redirect_to webpay_failure_path(params) and return
+      else
+        if @order.completed?
+          flash.notice = Spree.t(:order_processed_successfully)
+          redirect_to completion_route and return
+        else
+          redirect_to webpay_failure_path(params) and return
+        end
+      end
     end
 
     # GET/POST spree/webpay/success
