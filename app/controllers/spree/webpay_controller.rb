@@ -25,8 +25,7 @@ module Spree
     # GET/POST spree/webpay/result
     def result
       # To clean the Cart
-      session[:order_id] = nil
-      @current_order     = nil
+      ensure_new_order
 
       redirect_to root_path and return if @payment.blank?
 
@@ -45,8 +44,7 @@ module Spree
     # GET/POST spree/webpay/success
     def success
       # To clean the Cart
-      session[:order_id] = nil
-      @current_order     = nil
+      ensure_new_order
 
       redirect_to root_path and return if @payment.blank?
 
@@ -84,6 +82,14 @@ module Spree
       # Same as CheckoutController#completion_route
       def completion_route
         spree.order_path(@order)
+      end
+
+      def ensure_new_order
+        # Olvida la sesion, asi creara una nueva orden
+        session[:order_id] = nil
+        @current_order     = nil
+        cookies.signed[:guest_token] = nil
+        cookies.permanent.signed[:guest_token] = SecureRandom.urlsafe_base64(nil, false)
       end
   end
 end
