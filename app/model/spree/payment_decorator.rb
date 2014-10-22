@@ -14,7 +14,7 @@ module Spree
     end
 
     def webpay_quota_type
-      case webpay_params["TBK_TIPO_PAGO"]
+      case webpay_params["TBK_TIPO_PAGO_M001"]
       when "VN"
         return "Sin Cuotas"
       when "VC"
@@ -26,12 +26,12 @@ module Spree
       when "VD"
         return "Débito"
       else
-        return webpay_params["TBK_TIPO_PAGO"]
+        return webpay_params["TBK_TIPO_PAGO_M001"]
       end
     end
 
     def webpay_payment_type
-      case webpay_params["TBK_TIPO_PAGO"]
+      case webpay_params["TBK_TIPO_PAGO_M001"]
       when "VN"
         return "Crédito"
       when "VC"
@@ -43,7 +43,7 @@ module Spree
       when "VD"
         return "Redcompra"
       else
-        return webpay_params["TBK_TIPO_PAGO"]
+        return webpay_params["TBK_TIPO_PAGO_M001"]
       end
     end
 
