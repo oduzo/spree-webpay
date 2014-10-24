@@ -1,6 +1,6 @@
 require 'yaml'
 
-module TBK
+module Tbk
   module Webpay
     class Config
       attr_accessor :config_filepath, :tbk_webpay_cgi_base_url, :tbk_webpay_tbk_root_path

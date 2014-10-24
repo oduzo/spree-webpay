@@ -15,7 +15,7 @@ module Spree
     end
 
     def provider_class
-      TBK::Webpay::Payment
+      Tbk::Webpay::Payment
     end
 
     def provider

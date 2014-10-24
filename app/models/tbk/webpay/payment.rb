@@ -1,4 +1,4 @@
-module TBK
+module Tbk
   module Webpay
     class Payment
       # Public: Loads the configuration file tbk-webpay.yml
@@ -8,7 +8,7 @@ module TBK
       #
       # Returns a Config object.
       def initialize env = nil
-        @@config ||= TBK::Webpay::Config.new(env)
+        @@config ||= Tbk::Webpay::Config.new(env)
       end
 
       # Public: Initial communication from the application to Webpay servers
