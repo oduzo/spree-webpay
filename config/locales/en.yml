@@ -1,5 +1,6 @@
 en:
   spree:
+    use_app_default: Default
     order_state:
       webpay: webpay
     webpay_redirect: You'll be redirected to WebPay Hosted Payment Page. After completing the payment form you'll be back to the store.

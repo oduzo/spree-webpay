@@ -1,5 +1,6 @@
 es:
   spree:
+    use_app_default: Por defecto
     order_state:
       webpay: webpay
     webpay_redirect: Usted será redirigido a página de pago de Webpay. Después de completar el formulario de pago volverá a la tienda.
