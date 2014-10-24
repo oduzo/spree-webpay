@@ -18,7 +18,7 @@ module Spree
 
       render text: response
       return
-      
+
       render nothing: true
     end
 
@@ -27,7 +27,7 @@ module Spree
       # To clean the Cart
       session[:order_id] = nil
       @current_order     = nil
-      
+
       redirect_to root_path and return if @payment.blank?
 
       if @payment.failed?
@@ -40,7 +40,7 @@ module Spree
         else
           redirect_to webpay_failure_path(params) and return
         end
-          
+
       end
     end
 

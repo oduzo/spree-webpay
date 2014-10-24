@@ -103,24 +103,15 @@ module Tbk
 
           if accepted
             Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Valid ")
-            order = payment.order
-            begin
-              payment.capture!
-              order.next! unless order.completed?
-            rescue Spree::Core::GatewayError => error
-              Rails.logger.send("#{logfile}").error("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Error: #{error} ")
+            unless ['failed', 'invalid'].include?(payment.state)
+              WebpayWorker.perform_async(payment.id, "accepted")
             end
             Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Completed ")
             return "ACEPTADO"
           else
             Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Invalid ")
-            unless ['processing', 'failed', 'invalid'].include?(payment.state)
-              begin
-                payment.started_processing!
-                payment.failure!
-              rescue Spree::Core::GatewayError => error
-                Rails.logger.send("#{logfile}").error("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Error: #{error} ")
-              end
+            unless ['completed', 'failed', 'invalid'].include?(payment.state)
+              WebpayWorker.perform_async(payment.id, "rejected")
             end
             Rails.logger.send("#{logfile}").info("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Rejected ")
             return "RECHAZADO"
