@@ -25,7 +25,7 @@ module Spree
     # GET/POST spree/webpay/result
     def result
       # To clean the Cart
-      ensure_new_order
+      # ensure_new_order
 
       redirect_to root_path and return if @payment.blank?
 
@@ -44,7 +44,7 @@ module Spree
     # GET/POST spree/webpay/success
     def success
       # To clean the Cart
-      ensure_new_order
+      # ensure_new_order
 
       redirect_to root_path and return if @payment.blank?
 
