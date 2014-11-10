@@ -62,68 +62,59 @@ module TBK
       # Returns a string redered as text.
       def confirmation params
         payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
-        file_path = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
+        file_path = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Mall#{params[:TBK_ID_SESION]}.txt"
         tbk_mac_path = "#{config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""
+
         params.except(:controller, :action, :current_store_id).each do |key, value|
           mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
         end
 
-        mac_string.chop!
-        File.open file_path, 'w+' do |file|
-            file.write(mac_string)
-        end
+        order = Spree::Order.find_by number: params[:TBK_ORDEN_COMPRA]
 
-        check_mac = system(tbk_mac_path.to_s, file_path.to_s)
+        if params[:TBK_COD_RESP_M001] == "0"
+          mac_string.chop!
 
-        accepted = true
-        unless check_mac
-          accepted = false
-          Rails.logger.info file_path
-          Rails.logger.info tbk_mac_path
-          Rails.logger.info mac_string
-          Rails.logger.info "Failed check mac"
-        end
-
-        # the confirmation is invalid if order_id is unknown
-        if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
-          accepted = false
-          Rails.logger.info "Invalid order_id"
-        end
-
-        # double payment
-        if order_paid? params[:TBK_ORDEN_COMPRA]
-          accepted = false
-          Rails.logger.info "Double Payment Order #{params[:TBK_ORDEN_COMPRA]}"
-        end
-
-        # wrong amount
-        if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
-          accepted = false
-          Rails.logger.info "Wrong amount"
-        end
-
-        if accepted
-          if params[:TBK_COD_RESP_M001] == "0"
-            order = payment.order
-            begin
-              payment.capture!
-              order.next! unless order.completed?
-            rescue Spree::Core::GatewayError => error
-              Rails.logger.error error
-            end
+          File.open file_path, 'w+' do |file|
+              file.write(mac_string)
           end
+
+          check_mac = system(tbk_mac_path.to_s, file_path.to_s)
+
+          accepted = true
+
+          unless check_mac
+            accepted = false
+          end
+
+          # the confirmation is invalid if order_id is unknown
+          if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
+            accepted = false
+          end
+
+          # double payment
+          if order_paid? params[:TBK_ORDEN_COMPRA]
+            accepted = false
+          end
+
+          # wrong amount
+          if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
+            accepted = false
+          end
+
+          if accepted
+            unless ['failed', 'invalid'].include?(payment.state)
+              WebpayWorker.perform_async(payment.id, "accepted")
+            end
+            return "ACEPTADO"
+          else
+            unless ['completed', 'failed', 'invalid'].include?(payment.state)
+              WebpayWorker.perform_async(payment.id, "rejected")
+            end
+            return "RECHAZADO"
+          end
+        else # TBK_COD_RESP_M001 != 0
           return "ACEPTADO"
-        else
-          unless ['processing', 'failed', 'invalid'].include?(payment.state)
-            begin
-              payment.started_processing!
-              payment.failure!
-            rescue Spree::Core::GatewayError => error
-              Rails.logger.error error
-            end
-          end
-          return "RECHAZADO"
         end
       end
 
