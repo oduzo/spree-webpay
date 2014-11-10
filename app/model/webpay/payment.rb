@@ -63,8 +63,8 @@ module TBK
       def confirmation params
         logfile = "#{Time.now.to_date.to_s.underscore}_webpay"
         payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
-        file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
-        tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
+        file_path = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Mall#{params[:TBK_ID_SESION]}.txt"
+        tbk_mac_path = "#{config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""
         params.except(:controller, :action, :current_store_id).each do |key, value|
           mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
