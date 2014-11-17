@@ -36,6 +36,10 @@ module Tbk
           tbk_string_params += "#{key}=#{value}&"
         end
 
+        Rails.logger.info '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
+        Rails.logger.info cgi_url
+        Rails.logger.info tbk_string_params
+        Rails.logger.info '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
 
         result = RestClient.post cgi_url, tbk_string_params
       end
@@ -104,6 +108,7 @@ module Tbk
           if accepted
             Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Valid ")
             unless ['failed', 'invalid'].include?(payment.state)
+              payment.update_column(:accepted, true)
               WebpayWorker.perform_async(payment.id, "accepted")
             end
             Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Completed ")
@@ -111,6 +116,7 @@ module Tbk
           else
             Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Invalid ")
             unless ['completed', 'failed', 'invalid'].include?(payment.state)
+              payment.update_column(:accepted, false)
               WebpayWorker.perform_async(payment.id, "rejected")
             end
             Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Rejected ")
