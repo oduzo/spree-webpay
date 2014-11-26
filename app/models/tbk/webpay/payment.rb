@@ -1,3 +1,5 @@
+require 'rest_client'
+
 module Tbk
   module Webpay
     class Payment
