@@ -11,7 +11,7 @@
   <br />
   <span class="full-name"><%= source.name %></span>
 <% else %>
-  <% if payment.webpay? %>
+  <% if payment.webpay? && payment.webpay_params %>
     <dl>
       <dt><%= Spree.t("webpay_name_store") %></dt>
       <dd><%= @order.store.name rescue Spree::Config.site_name %></dd>
@@ -26,7 +26,7 @@
       <dd><%= Spree.t("webpay_sale") %></dd>
 
       <dt><%= Spree.t("webpay_order_number") %></dt>
-      <dd><%= payment.webpay_params['TBK_ORDEN_COMPRA'] %></dd>
+      <dd><%= @order.number %></dd>
 
       <dt><%= Spree.t("webpay_trx_date") %></dt>
       <dd><%= @order.completed_at.to_s(:db) %></dd>
@@ -49,6 +49,5 @@
     </dl>
   <% else %>
     <%= content_tag(:span, payment.payment_method.name) %>
-  <% end %>
-  
+  <% end %>  
 <% end %>
