@@ -13,6 +13,15 @@ This extension was created for multi-domain spree
 * Install in your project the e-commerce Connection Kit (KCC) from Transbank
 * Follow the Transbank Webpay Integration manual to configure and set permissions to the directory tree and files.
 * Serve your CGI scripts in your Web server
+* This gem use rest_client, multi_logger and sidekiq to work on production.
+* For sidekiq, add new queue "webpay"
+
+```yaml
+# config/sidekiq.yml
+:queues:
+  - default
+  - webpay
+```
 
 ## Usage
 
