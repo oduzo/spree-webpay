@@ -25,6 +25,11 @@ Set CGI URL and root path in config/tbk-webpay.yml
       cgi_base_url: "http://staging.example.com/cgi"
       tbk_root_path: "/home/deploy/staging.example.com/cgi"
 
+## Mall Configuration
+
+When using the gem with a Mall store, you must set in the backend the Store Code which is different from the Commerce Code. Remember also to set the 
+`tbk_config.dat` accordingly.
+
 
 ## Installation
 ------------
