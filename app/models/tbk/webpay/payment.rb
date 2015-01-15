@@ -153,7 +153,7 @@ module Tbk
       # Returns a boolean indicating if the order is already paid.
       def order_paid? order_id
         order = Spree::Order.find_by_number(order_id)
-        return order.paid?
+        return order.paid? || order.payments.completed.any?
       end
 
       # Private: Checks if an order has the same amount given by Webpay.
