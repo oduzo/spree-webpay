@@ -1,3 +1,5 @@
+require 'rest_client'
+
 module Tbk
   module Webpay
     class Payment
@@ -102,7 +104,7 @@ module Tbk
           # wrong amount
           if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
             accepted = false
-            Rails.logger.send("#{logfile}").warn("[v#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order Amount")
+            Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order Amount")
           end
 
           if accepted

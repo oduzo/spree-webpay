@@ -2,10 +2,10 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_tbk_webpay'
-  s.version     = '1.2.6'
+  s.version     = '3.0.0'
   s.summary     = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.description = 'Plugs Webpay Payment Gateway into Spree Stores'
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.0.0'
 
   s.authors     = ["Gonzalo Bulnes, Ignacio Mella, Cristian Carreño, Ignacio Verdejo, Gonzalo Moreno"]
   s.email       = ["iverdejo@acid.cl, gmoreno@acid.cl"]
@@ -16,7 +16,10 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '~> 2.1.3'
+  s.add_dependency 'spree_core', '~> 3.0'
+  s.add_dependency 'sidekiq'
+  s.add_dependency 'multi_logger'
+  s.add_dependency 'rest-client'
   s.add_development_dependency 'capybara', '~> 2.1'
   s.add_development_dependency 'coffee-rails'
   s.add_development_dependency 'database_cleaner'

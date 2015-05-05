@@ -1,7 +1,6 @@
 module Spree
   class WebpayController < StoreController
     skip_before_filter :verify_authenticity_token
-    helper 'spree/checkout'
 
     before_filter :load_data, :except => [:failure]
 
