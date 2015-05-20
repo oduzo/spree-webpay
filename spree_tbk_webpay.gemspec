@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.description = 'Plugs Webpay Payment Gateway into Spree Stores'
   s.required_ruby_version = '>= 1.9.3'
 
-  s.authors     = ["Gonzalo Bulnes, Ignacio Mella, Cristian Carreño, Ignacio Verdejo, Gonzalo Moreno, Alfonso Cabargas"]
+  s.authors     = ["Gonzalo Bulnes, Ignacio Mella, Cristian Carreño, Ignacio Verdejo, Gonzalo Moreno, Alfonso Cabargas, Alexander Sysoev"]
   s.email       = ["iverdejo@acid.cl, gmoreno@acid.cl, fcabargas@acid.cl"]
   s.homepage    = 'http://www.acid.cl'
 
