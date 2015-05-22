@@ -14,6 +14,18 @@ This extension was created for multi-domain spree
 * Follow the Transbank Webpay Integration manual to configure and set permissions to the directory tree and files.
 * Serve your CGI scripts in your Web server
 
+* This gem use rest_client, multi_logger and sidekiq to work on production.
+* For sidekiq, add new queue "webpay":
+
+```yaml
+# config/sidekiq.yml
+
+:queues:
+  - default
+  - webpay
+```
+
+
 ## Usage
 
 Set CGI URL and root path in config/tbk-webpay.yml

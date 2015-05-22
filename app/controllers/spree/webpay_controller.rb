@@ -48,11 +48,11 @@ module Spree
 
       redirect_to root_path and return if @payment.blank?
 
-      if @payment.failed?
+      if @payment.failed? || !@payment.accepted
         # reviso si el pago esta fallido y lo envio a la vista correcta
         redirect_to webpay_failure_path(params) and return
       else
-        if @order.completed?
+        if @order.completed? || @payment.accepted
           flash.notice = Spree.t(:order_processed_successfully)
           redirect_to completion_route and return
         else

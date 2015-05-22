@@ -103,31 +103,29 @@ module TBK
           Rails.logger.info "Wrong amount"
         end
 
+        update_spree_payment_status(payment, accepted)
+
         if accepted
           if params[:TBK_COD_RESP_M001] == "0"
-            order = payment.order
-            begin
-              payment.capture!
-              order.next! unless order.completed?
-            rescue Spree::Core::GatewayError => error
-              Rails.logger.error error
+            unless ['failed', 'invalid'].include?(payment.state)
+              WebpayWorker.perform_async(payment.id, "accepted")
             end
           end
           return "ACEPTADO"
         else
-          unless ['processing', 'failed', 'invalid'].include?(payment.state)
-            begin
-              payment.started_processing!
-              payment.failure!
-            rescue Spree::Core::GatewayError => error
-              Rails.logger.error error
-            end
+          unless ['completed', 'failed', 'invalid'].include?(payment.state)
+            WebpayWorker.perform_async(payment.id, "rejected")
           end
+
           return "RECHAZADO"
         end
       end
 
       private
+
+      def update_spree_payment_status(payment, status)
+        payment.update_column(:accepted, status)
+      end
 
       # Private: Checks if an order exists and is ready for payment.
       #
