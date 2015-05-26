@@ -1,6 +1,7 @@
 module Spree
   Payment.class_eval do
     scope :from_webpay, -> { joins(:payment_method).where(spree_payment_methods: {type: Spree::Gateway::WebpayPlus.to_s}) }
+    serialize(:webpay_params, Hash)
 
     after_initialize :set_webpay_trx_id
 
@@ -58,7 +59,7 @@ module Spree
       #
       # Returns generated trx_id.
       def generate_webpay_trx_id
-        Digest::MD5.hexdigest("#{self.order.number}#{self.order.payments.count}")
+        Digest::MD5.hexdigest("#{order.number}#{order.payments.count}") if order
       end
   end
 end

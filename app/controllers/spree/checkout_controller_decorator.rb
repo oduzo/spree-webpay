@@ -2,10 +2,10 @@ module Spree
   CheckoutController.class_eval do
     def edit
       @payment = @order.payments.order(:id).last
-
-      if params[:state] == Spree::Gateway::WebpayPlus.STATE and @order.state == Spree::Gateway::WebpayPlus.STATE
+      webpay_state = Spree::Gateway::WebpayPlus.STATE
+      
+      if params[:state] == webpay_state && @order.state == webpay_state
         payment_method     = @order.webpay_payment_method
-
         trx_id             = @payment.webpay_trx_id
         amount             = @order.webpay_amount
         success_url        = webpay_success_url(:protocol => "http")
@@ -16,7 +16,6 @@ module Spree
         respond_to do |format|
           format.html { render text: response }
         end
-
       end
     end
   end
