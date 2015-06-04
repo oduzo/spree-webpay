@@ -14,10 +14,10 @@
   <% if payment.webpay? && payment.webpay_params %>
     <dl>
       <dt><%= Spree.t("webpay_name_store") %></dt>
-      <dd><%= @order.store.name rescue Spree::Config.site_name %></dd>
+      <dd><%= @order.store.name rescue Spree::Store.default.name %></dd>
 
       <dt><%= Spree.t("webpay_store_url") %></dt>
-      <dd><%= @order.store.default_domain rescue Spree::Config.site_url %></dd>
+      <dd><%= @order.store.default_domain rescue Spree::Store.default.url %></dd>
 
       <dt><%= Spree.t("webpay_buyer_name") %></dt>
       <dd><%= @order.webpay_client_name %></dd>

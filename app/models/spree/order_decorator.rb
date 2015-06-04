@@ -7,8 +7,8 @@ module Spree
 
     # Step only visible when payment failure
     
-    insert_checkout_step :webpay, :after => :payment, if: Proc.new {|order| order.has_webpay_payment_method? or order.state == Spree::Gateway::WebpayPlus.STATE}
-    remove_transition from: :payment, to: :complete,  if: Proc.new {|order| order.has_webpay_payment_method? or order.state == Spree::Gateway::WebpayPlus.STATE}
+    insert_checkout_step :webpay, :after => :payment, if: Proc.new {|order| order.has_webpay_payment_method? || order.state == Spree::Gateway::WebpayPlus.STATE}
+    remove_transition from: :payment, to: :complete,  if: Proc.new {|order| order.has_webpay_payment_method? || order.state == Spree::Gateway::WebpayPlus.STATE}
     
     
     # Indica si la orden tiene algun pago con Webpay completado con exito
