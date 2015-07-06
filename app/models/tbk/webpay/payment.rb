@@ -84,7 +84,7 @@ module Tbk
 
           logger("Check Mac", @mac_string) if @verbose
           unless Rails.env.development?
-            check_mac = system(tbk_mac_path.to_s, file_path.to_s) 
+            check_mac = system(tbk_mac_path.to_s, file_path.to_s)
           else
             check_mac = true
           end
@@ -96,7 +96,7 @@ module Tbk
           end
 
           # the confirmation is invalid if order_id is unknown
-          if not order_exists? 
+          if not order_exists?
             accepted = false
           end
 
@@ -113,14 +113,14 @@ module Tbk
           if accepted && !['failed', 'invalid'].include?(@payment.state)
             logger("Valid", ":)") if @verbose
             @payment.update_column(:accepted, true)
-            
+
             if @payment.payment_method.preferred_use_async
               WebpayJob.perform_later(@payment.id, "accepted")
             else
               @payment.capture!
               @order.next!
             end
-            
+
             logger("Completed", ":)") if @verbose
             return "ACEPTADO"
           else
@@ -154,7 +154,7 @@ module Tbk
       # order_id - integer - The purchase order id.
       #
       # Returns a boolean indicating if the order exists and is ready for payment.
-      def order_exists? 
+      def order_exists?
         result = @order.is_a? Spree::Order
         logger(__method__.to_s, result) if @verbose
         return result

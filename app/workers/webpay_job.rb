@@ -15,7 +15,7 @@ class WebpayJob < ActiveJob::Base
     rescue => e
       puts e.message
       Rails.logger.error("Error al procesar pago orden #{payment.order.number}: E -> #{e.message}")
-    ensure 
+    ensure
       payment.order.save!
     end
   end

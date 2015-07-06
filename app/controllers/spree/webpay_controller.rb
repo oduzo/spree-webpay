@@ -58,7 +58,6 @@ module Spree
         unless @payment.blank?
           @payment_method = @payment.payment_method
           @order          = @payment.order
-          @order.next! unless @order.completed?
         end
       end
 
