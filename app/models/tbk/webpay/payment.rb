@@ -1,4 +1,5 @@
 require 'rest_client'
+require 'multi_logger'
 
 module Tbk
   module Webpay
@@ -51,82 +52,96 @@ module Tbk
       #
       # Returns a string redered as text.
       def confirmation params
-        logfile = "#{Time.now.to_date.to_s.underscore}_webpay"
-        payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
+        @logfile = "#{Time.now.to_date.to_s.underscore}_webpay"
+        @payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
+        @payment.reload
+        @verbose = @payment.payment_method.preferred_verbose
         file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
         tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
-        mac_string = ""
+        @mac_string = ""
         params.except(:controller, :action, :current_store_id).each do |key, value|
-          mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
+          @mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
         end
-        order = Spree::Order.find_by number: params[:TBK_ORDEN_COMPRA]
+        @order = Spree::Order.find_by number: params[:TBK_ORDEN_COMPRA]
+        @order.reload
 
         begin
-          MultiLogger.add_logger("#{logfile}")
+          MultiLogger.add_logger("#{@logfile}") if @verbose
         rescue
           # Nothing for now
         end
 
         if params[:TBK_RESPUESTA] == "0"
 
-          Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Inicio")
+          logger("Inicio", "") if @verbose
 
-          mac_string.chop!
-          File.open file_path, 'w+' do |file|
-              file.write(mac_string)
+          @mac_string.chop!
+          unless Rails.env.development?
+            File.open file_path, 'w+' do |file|
+              file.write(@mac_string)
+            end
           end
 
-          Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Mac: #{mac_string}")
-
-          check_mac = system(tbk_mac_path.to_s, file_path.to_s)
+          logger("Check Mac", @mac_string) if @verbose
+          unless Rails.env.development?
+            check_mac = system(tbk_mac_path.to_s, file_path.to_s)
+          else
+            check_mac = true
+          end
 
           accepted = true
           unless check_mac
             accepted = false
-            Rails.logger.send("#{logfile}").warn("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Failed check mac: #{mac_string}, #{file_path}, #{tbk_mac_path}")
+            logger("Failed check mac", "") if @verbose
           end
 
-          Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Order exists")
           # the confirmation is invalid if order_id is unknown
-          if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
+          if not order_exists?
             accepted = false
-            Rails.logger.send("#{logfile}").warn("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order")
           end
 
-          Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Order Paid?")
           # double payment
-          if order_paid? params[:TBK_ORDEN_COMPRA]
+          if order_paid?
             accepted = false
-            Rails.logger.send("#{logfile}").warn("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order Paid?")
           end
 
-          Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Check Order Amount")
           # wrong amount
-          if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
+          if not order_right_amount? params[:TBK_MONTO]
             accepted = false
-            Rails.logger.send("#{logfile}").warn("[#{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Fail Check Order Amount")
           end
 
-          if accepted
-            Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Valid ")
-            unless ['failed', 'invalid'].include?(payment.state)
-              payment.update_column(:accepted, true)
-              WebpayWorker.perform_async(payment.id, "accepted")
+          if accepted && !['failed', 'invalid'].include?(@payment.state)
+            logger("Valid", ":)") if @verbose
+            @payment.update_column(:accepted, true)
+
+            if @payment.payment_method.preferred_use_async
+              WebpayJob.perform_later(@payment.id, "accepted")
+            else
+              @payment.capture!
+              @order.next!
             end
-            Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Completed ")
+
+            logger("Completed", ":)") if @verbose
             return "ACEPTADO"
           else
-            Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Invalid ")
-            unless ['completed', 'failed', 'invalid'].include?(payment.state)
-              payment.update_column(:accepted, false)
-              WebpayWorker.perform_async(payment.id, "rejected")
+            logger("Invalid", ":(") if @verbose
+            unless ['completed', 'failed', 'invalid'].include?(@payment.state)
+              @payment.update_column(:accepted, false)
+
+              if @payment.payment_method.preferred_use_async
+                WebpayJob.perform_later(@payment.id, "rejected")
+              else
+                @payment.started_processing!
+                @payment.failure!
+              end
+
             end
-            Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] Rejected ")
+            logger("Rejected", ":(") if @verbose
             return "RECHAZADO"
           end
 
         else  # TBK_RESPUESTA != 0
-          Rails.logger.send("#{logfile}").info("[Original #{params[:TBK_ORDEN_COMPRA]} #{order.try(:state)}] TBK_RESPUESTA = #{params[:TBK_RESPUESTA]} ")
+          logger("TBK_RESPUESTA != 0", params[:TBK_RESPUESTA]) if @verbose
           return "ACEPTADO"
         end
 
@@ -139,13 +154,10 @@ module Tbk
       # order_id - integer - The purchase order id.
       #
       # Returns a boolean indicating if the order exists and is ready for payment.
-      def order_exists?(order_id, session_id)
-        order = Spree::Order.find_by_number(order_id)
-        if order.blank?
-          return false
-        else
-          return true
-        end
+      def order_exists?
+        result = @order.is_a? Spree::Order
+        logger(__method__.to_s, result) if @verbose
+        return result
       end
 
       # Private: Checks if an order is already paid.
@@ -153,9 +165,11 @@ module Tbk
       # order_id - integer - The purchase order id.
       #
       # Returns a boolean indicating if the order is already paid.
-      def order_paid? order_id
-        order = Spree::Order.find_by_number(order_id)
-        return order.paid? || order.payments.completed.any?
+      def order_paid?
+        return false unless @order
+        result = @order.paid? || @order.payments.completed.any?
+        logger(__method__.to_s, result) if @verbose
+        return result
       end
 
       # Private: Checks if an order has the same amount given by Webpay.
@@ -164,13 +178,15 @@ module Tbk
       # tbk_total_amount - The total amount of the purchase order given by Webpay.
       #
       # Returns a boolean indicating if the order has the same total amount given by Webpay.
-      def order_right_amount? order_id, tbk_total_amount
-        order = Spree::Order.find_by_number(order_id)
-        if order.blank?
-          return false
-        else
-          return order.webpay_amount == tbk_total_amount
-        end
+      def order_right_amount? tbk_total_amount
+        return false unless @order
+        result = @order.webpay_amount.to_i == tbk_total_amount.to_i
+        logger(__method__.to_s, result) if @verbose
+        return result
+      end
+
+      def logger message, value
+        Rails.logger.send("#{@logfile}").info("[#{@order.number} #{@order.try(:state)}] #{message} #{value}")
       end
     end
   end

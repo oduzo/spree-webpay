@@ -1,6 +1,8 @@
 module Spree
   # Gateway for Transbank Webpay Hosted Payment Pages solution
   class Gateway::WebpayPlus < Gateway
+    preference :use_async, :boolean
+    preference :verbose, :boolean
 
     def self.STATE
       'webpay'
@@ -35,8 +37,7 @@ module Spree
       gateway_order_id   = gateway_options[:order_id]
       order_number       = gateway_order_id.split('-').first
       payment_identifier = gateway_order_id.split('-').last
-
-      payment = Spree::Payment.find_by(identifier: payment_identifier)
+      payment = Spree::Payment.find_by(number: payment_identifier)
       order   = payment.order
 
       if payment.webpay_params?
