@@ -9,7 +9,7 @@
 
   	<dt>TBK_ORDEN_COMPRA: </dt>
   	<dd><%= @order.number %></dd>
-    
+
     <dt>TBK_ID_SESION</dt>
     <dd><%= Digest::MD5.hexdigest("#{@order.number}#{@order.payments.count}") %></dd>
 

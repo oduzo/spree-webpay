@@ -3,7 +3,7 @@ module Spree
     def edit
       @payment = @order.payments.order(:id).last
       webpay_state = Spree::Gateway::WebpayPlus.STATE
-      
+
       if params[:state] == webpay_state && @order.state == webpay_state
         payment_method     = @order.webpay_payment_method
         trx_id             = @payment.webpay_trx_id

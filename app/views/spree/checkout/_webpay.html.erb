@@ -6,13 +6,10 @@
     <p>
       <%= Spree.t(:webpay) %>
     </p>
-    <% unless Rails.env.production? %>
-      <span><%= @error %></span>
-    <% end %>
   </div>
 </div>
 
 <div class="well text-right form-buttons" data-hook="buttons">
-  <%= link_to Spree.t(:save_and_continue), checkout_state_path(@order.state), :class => 'continue button primary' %>
+  <%= link_to Spree.t(:save_and_continue), checkout_state_path(@order.state), :class => 'btn btn-lg btn-success primary' %>
   <script>Spree.disableSaveOnClick();</script>
 </div>

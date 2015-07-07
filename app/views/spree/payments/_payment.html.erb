@@ -11,7 +11,7 @@
   <br />
   <span class="full-name"><%= source.name %></span>
 <% else %>
-  <% if payment.webpay? && payment.webpay_params %>
+  <% if payment.webpay? && payment.webpay_params && payment.completed? %>
     <dl>
       <dt><%= Spree.t("webpay_name_store") %></dt>
       <dd><%= @order.store.name rescue Spree::Store.default.name %></dd>
@@ -42,12 +42,12 @@
 
       <dt><%= Spree.t("webpay_card_number") %></dt>
       <dd><%= payment.webpay_card_number %></dd>
-      
+
       <dt><%= Spree.t("webpay_auth_code") %></dt>
       <dd><%= payment.webpay_params['TBK_CODIGO_AUTORIZACION'] %></dd>
 
     </dl>
   <% else %>
     <%= content_tag(:span, payment.payment_method.name) %>
-  <% end %>  
+  <% end %>
 <% end %>
