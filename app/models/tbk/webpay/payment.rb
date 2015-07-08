@@ -11,7 +11,7 @@ module Tbk
       #
       # Returns a Config object.
       def initialize env = nil
-        @@config ||= Tbk::Webpay::Config.new(env)
+        @config ||= Tbk::Webpay::Config.new(env)
       end
 
       # Public: Initial communication from the application to Webpay servers
@@ -31,7 +31,7 @@ module Tbk
           'TBK_URL_EXITO' => success_url
         }
 
-        cgi_url = "#{@@config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
+        cgi_url = "#{@config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"
 
         tbk_string_params = ""
 
@@ -56,8 +56,8 @@ module Tbk
         @payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
         @payment.reload
         @verbose = @payment.payment_method.preferred_verbose
-        file_path = "#{@@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
-        tbk_mac_path = "#{@@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
+        file_path = "#{@config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
+        tbk_mac_path = "#{@config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         @mac_string = ""
         params.except(:controller, :action, :current_store_id).each do |key, value|
           @mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
