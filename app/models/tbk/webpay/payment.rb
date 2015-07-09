@@ -118,7 +118,9 @@ module Tbk
               WebpayJob.perform_later(@payment.id, "accepted")
             else
               @payment.capture!
-              @order.next!
+              unless @payment.orders.next!
+                logger("Pago completado, Orden incompleta!", ":O") if @verbose
+              end
             end
 
             logger("Completed", ":)") if @verbose
