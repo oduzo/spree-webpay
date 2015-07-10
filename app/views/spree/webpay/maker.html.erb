@@ -26,10 +26,10 @@
 
             if ( $('input[name=TBK_RESPUESTA]:checked').val() == '0' ){
               $("button.success").removeClass('btn-default').addClass('btn-primary');
-              $("button.failure").removeClass('btn-primary');
+              $("button.failure").removeClass('btn-primary').addClass('btn-default');
             } else {
-              $("button.success").removeClass('btn-primary');
               $("button.failure").removeClass('btn-default').addClass('btn-primary');
+              $("button.success").removeClass('btn-primary').addClass('btn-default');
             }
 
           }
@@ -124,7 +124,7 @@
           <div class="col-sm-6">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Defaults</h3>
+                <h3 class="panel-title">Response</h3>
               </div>
               <div class="panel-body">
                 <div class="form-group">
@@ -211,6 +211,8 @@
                 <h3 class="panel-title">Confirmation</h3>
               </div>
               <div class="panel-body">
+                <div class='alert alert-info' role='alert'>Enviar confirmación</div>
+
                 <div class="form-group">
                   <label for="TBK_RESPUESTA" class="col-sm-4 control-label">Respuesta Transbank</label>
                   <div class="col-sm-8">
@@ -237,9 +239,11 @@
           <div class="col-sm-6">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h3 class="panel-title">Response</h3>
+                <h3 class="panel-title">Jump</h3>
               </div>
               <div class="panel-body">
+                <div class='alert alert-info' role='alert'>Use algunos de los siguientes links para volver al comercio</div>
+
                 <div class="btn-group btn-group-justified" role="group" aria-label="submits">
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-default success" onclick="sentSuccessForm()">Success</button>
