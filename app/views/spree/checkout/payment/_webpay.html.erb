@@ -24,3 +24,6 @@
   </dl>
 <% end %>
 
+<% if Rails.env.development? %>
+  <%= link_to 'MAKER', webpay_maker_path, class: 'btn btn-info btn-block', target: :blank %>
+<% end %>
