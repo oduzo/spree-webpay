@@ -6,13 +6,13 @@ module Spree
 
     # GET spree/webpay/maker
     def maker
-      redirect_to spree.root_path unless Rails.env.development?
+      redirect_to spree.root_path if Rails.env.development?
 
       @webpay = {}
       @webpay[:TBK_TIPO_TRANSACCION] = "TR_NORMAL"
       if current_order
         @webpay[:TBK_ORDEN_COMPRA]     = current_order.number
-        @webpay[:TBK_ID_SESION]        = current_order.payments.last.try(:webpay_trx_id) || current_order.dummy_webpay_trx_id
+        @webpay[:TBK_ID_SESION]        = current_order.payments.valid.last.try(:webpay_trx_id) || current_order.dummy_webpay_trx_id
         @webpay[:TBK_MONTO]            = current_order.webpay_amount
       end
       @webpay[:TBK_URL_CONFIRMACION] = spree.webpay_confirmation_url
