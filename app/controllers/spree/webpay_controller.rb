@@ -6,7 +6,7 @@ module Spree
 
     # GET spree/webpay/maker
     def maker
-      redirect_to spree.root_path if Rails.env.development?
+      redirect_to spree.root_path if Rails.env.production?
 
       @webpay = {}
       @webpay[:TBK_TIPO_TRANSACCION] = "TR_NORMAL"
