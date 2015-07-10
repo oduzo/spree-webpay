@@ -1,0 +1,258 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head>
+    <%= render partial: 'spree/shared/head' %>
+
+    <script type="text/javascript">
+      function sentConfirmationForm(){
+        var uri, respuesta;
+
+        uri = 'TBK_URL_CONFIRMACION';
+        document.Webpay.action = document.getElementById(uri).value;
+
+        if (document.Webpay.TBK_REFERER.value.length == 0)
+          document.Webpay.TBK_REFERER.name = ''
+
+        $.post(document.Webpay.action, $("form[name=Webpay]").serialize())
+        .done(function(respuesta) {
+          $("button.confirmation").removeClass('btn-primary').addClass('btn-default');
+
+          if (respuesta == "ACEPTADO"){
+            $("#confirmationResponsContainer").html("<div class='alert alert-success' role='alert'>" + respuesta + "</div>");
+
+            if ( $('input[name=TBK_RESPUESTA]:checked').val() == '0' ){
+              $("button.success").removeClass('btn-default').addClass('btn-primary');
+              $("button.failure").removeClass('btn-primary');
+            } else {
+              $("button.success").removeClass('btn-primary');
+              $("button.failure").removeClass('btn-default').addClass('btn-primary');
+            }
+
+          }
+          else{
+            $("#confirmationResponsContainer").html("<div class='alert alert-danger' role='alert'>" + respuesta + "</div>");
+            $("button.success").removeClass('btn-primary');
+            $("button.failure").removeClass('btn-default').addClass('btn-primary');
+          }
+        })
+      }
+      function sentSuccessForm(){
+        sentForm('TBK_URL_EXITO');
+      }
+      function sentFailureForm(){
+        sentForm('TBK_URL_FRACASO');
+      }
+      function sentForm(uri){
+        document.Webpay.action = document.getElementById(uri).value;
+
+        if (document.Webpay.TBK_REFERER.value.length == 0)
+          document.Webpay.TBK_REFERER.name = ''
+
+        document.Webpay.submit();
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <form name="Webpay" method="POST" class="form-horizontal">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Routes</h3>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label for="confirmation_url" class="col-sm-3 control-label">Confirmation</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" name="TBK_URL_CONFIRMACION" id="TBK_URL_CONFIRMACION" placeholder="<%= @webpay[:TBK_URL_CONFIRMACION] %>" value="<%= @webpay[:TBK_URL_CONFIRMACION] %>">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_URL_EXITO" class="col-sm-3 control-label">Success</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" name="TBK_URL_EXITO" id="TBK_URL_EXITO" placeholder="<%= @webpay[:TBK_URL_EXITO] %>" value="<%= @webpay[:TBK_URL_EXITO] %>">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_URL_FRACASO" class="col-sm-3 control-label">Failure</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" name="TBK_URL_FRACASO" id="TBK_URL_FRACASO" placeholder="<%= @webpay[:TBK_URL_FRACASO] %>" value="<%= @webpay[:TBK_URL_FRACASO] %>">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Transaction</h3>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label for="TBK_TIPO_TRANSACCION" class="col-sm-4 control-label">Tipo Transaccion</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="TBK_TIPO_TRANSACCION" id="TBK_TIPO_TRANSACCION" placeholder="TR_NORMAL" value="<%= @webpay[:TBK_TIPO_TRANSACCION] %>">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_ORDEN_COMPRA" class="col-sm-4 control-label">Orden Compra</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="TBK_ORDEN_COMPRA" id="TBK_ORDEN_COMPRA" value="<%= @webpay[:TBK_ORDEN_COMPRA] %>">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_ID_SESION" class="col-sm-4 control-label">ID Sesion</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="TBK_ID_SESION" id="TBK_ID_SESION" value="<%= @webpay[:TBK_ID_SESION] %>">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_MONTO" class="col-sm-4 control-label">Monto</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="TBK_MONTO" id="TBK_MONTO" placeholder="" value="<%= @webpay[:TBK_MONTO] %>">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Defaults</h3>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label for="TBK_CODIGO_AUTORIZACION" class="col-sm-5 control-label">Codigo Autorizacion</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_CODIGO_AUTORIZACION" id="TBK_CODIGO_AUTORIZACION" placeholder="" value="2172589">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_FINAL_NUMERO_TARJETA" class="col-sm-5 control-label">Numero Final de Tarjeta</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_FINAL_NUMERO_TARJETA" id="TBK_FINAL_NUMERO_TARJETA" placeholder="" value="9674">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_FECHA_EXPIRACION" class="col-sm-5 control-label">Fecha Expiracion</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_FECHA_EXPIRACION" id="TBK_FECHA_EXPIRACION" placeholder="" value="122011">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_FECHA_CONTABLE" class="col-sm-5 control-label">Fecha Contable</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_FECHA_CONTABLE" id="TBK_FECHA_CONTABLE" placeholder="" value="122011">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_FECHA_TRANSACCION" class="col-sm-5 control-label">Fecha Transaccion</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_FECHA_TRANSACCION" id="TBK_FECHA_TRANSACCION" placeholder="" value="012011">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_HORA_TRANSACCION" class="col-sm-5 control-label">Hora Transaccion</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_HORA_TRANSACCION" id="TBK_HORA_TRANSACCION" placeholder="" value="1130">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_ID_TRANSACCION" class="col-sm-5 control-label">Id Transaccion</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_ID_TRANSACCION" id="TBK_ID_TRANSACCION" placeholder="" value="1131">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_TIPO_PAGO" class="col-sm-5 control-label">Tipo Pago</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_TIPO_PAGO" id="TBK_TIPO_PAGO" placeholder="" value="1">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_NUMERO_CUOTAS" class="col-sm-5 control-label">Numero Cuotas</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_NUMERO_CUOTAS" id="TBK_NUMERO_CUOTAS" placeholder="" value="0">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_MAC" class="col-sm-5 control-label">MAC</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_MAC" id="TBK_MAC" placeholder="" value="123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_TASA_INTERES_MAX" class="col-sm-5 control-label">Tasa Interes</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_TASA_INTERES_MAX" id="TBK_TASA_INTERES_MAX" placeholder="" value="0">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="TBK_REFERER" class="col-sm-5 control-label">Referer</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" name="TBK_REFERER" id="TBK_REFERER" placeholder="" value="">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Confirmation</h3>
+              </div>
+              <div class="panel-body">
+                <div class="form-group">
+                  <label for="TBK_RESPUESTA" class="col-sm-4 control-label">Respuesta Transbank</label>
+                  <div class="col-sm-8">
+                    <div class="btn-group btn-group-justified" data-toggle="buttons">
+                      <label class="btn btn-default active">
+                        <input type="radio" name="TBK_RESPUESTA" id="TBK_RESPUESTA_SUCCESS" value="0" autocomplete="off" checked> SUCCESS
+                      </label>
+                      <label class="btn btn-default">
+                        <input type="radio" name="TBK_RESPUESTA" id="TBK_RESPUESTA_FAILURE" value="-1" autocomplete="off"> FAILURE
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-offset-4 col-sm-8">
+                    <button type="button" class="btn btn-primary btn-block confirmation" onclick="sentConfirmationForm()">Confirm</button>
+                  </div>
+                </div>
+
+                <div id="confirmationResponsContainer"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Response</h3>
+              </div>
+              <div class="panel-body">
+                <div class="btn-group btn-group-justified" role="group" aria-label="submits">
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default success" onclick="sentSuccessForm()">Success</button>
+                  </div>
+                  <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-default failure" onclick="sentFailureForm()">Failure</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

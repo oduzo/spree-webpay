@@ -7,4 +7,6 @@ Spree::Core::Engine.routes.draw do
 
   # The failure URL
   match 'webpay/failure', to: 'webpay#failure', as: :webpay_failure, via: [:get, :post]
+
+  get 'webpay/maker', to: 'webpay#maker', as: :webpay_maker
 end
