@@ -11,7 +11,7 @@
   	<dd><%= @order.number %></dd>
 
     <dt>TBK_ID_SESION</dt>
-    <dd><%= Digest::MD5.hexdigest("#{@order.number}#{@order.payments.count}") %></dd>
+    <dd><%= @order.payments.any? ? @order.payments.last.try(:webpay_trx_id) : @order.dummy_webpay_trx_id %></dd>
 
   	<dt>TBK_MONTO: </dt>
   	<dd><%= @order.webpay_amount %></dd>
@@ -23,3 +23,4 @@
   	<dd><%= webpay_success_url(:protocol => "http") %></dd>
   </dl>
 <% end %>
+
