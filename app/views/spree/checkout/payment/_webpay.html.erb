@@ -11,7 +11,7 @@
   	<dd><%= @order.number %></dd>
 
     <dt>TBK_ID_SESION</dt>
-    <dd><%= param[:state] == 'confirm' ? @order.payments.valid.last.try(:webpay_trx_id) : @order.dummy_webpay_trx_id %></dd>
+    <dd><%= params[:state] == 'confirm' ? @order.payments.valid.last.try(:webpay_trx_id) : @order.dummy_webpay_trx_id %></dd>
 
   	<dt>TBK_MONTO: </dt>
   	<dd><%= @order.webpay_amount %></dd>
