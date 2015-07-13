@@ -4,6 +4,27 @@ module Spree
 
     before_filter :load_data, :except => [:failure]
 
+    # GET spree/webpay/maker
+    def maker
+      redirect_to spree.root_path if Rails.env.production?
+
+      @webpay = {}
+      @webpay[:TBK_TIPO_TRANSACCION] = "TR_NORMAL"
+      if current_order
+        @webpay[:TBK_ORDEN_COMPRA]     = current_order.number
+        @webpay[:TBK_ID_SESION]        = current_order.payments.valid.last.try(:webpay_trx_id) || current_order.dummy_webpay_trx_id
+        @webpay[:TBK_MONTO]            = current_order.webpay_amount
+      end
+      @webpay[:TBK_URL_CONFIRMACION] = spree.webpay_confirmation_url
+      @webpay[:TBK_URL_EXITO]        = spree.webpay_success_url
+      @webpay[:TBK_URL_FRACASO]      = spree.webpay_failure_url
+
+      render :layout => false
+    rescue => error
+      flash[:error] = error.message.to_s
+      redirect_to spree.root_path
+    end
+
     # POST spree/webpay/confirmation
     def confirmation
       if @payment.blank?

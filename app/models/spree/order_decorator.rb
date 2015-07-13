@@ -52,5 +52,13 @@ module Spree
       # TODO - Ver que pasa cuando hay decimales
       (total * 100).to_i
     end
+
+    # ToDo - Esto deberia ser un helper
+    # Public: Entrega el webpay_trx_id del pago.
+    #
+    # Returns webpay_trx_id.
+    def dummy_webpay_trx_id
+      Digest::MD5.hexdigest("#{self.number}#{self.payments.count}")
+    end
   end
 end

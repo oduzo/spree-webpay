@@ -48,14 +48,14 @@ module Spree
     end
 
     private
-      # Public: Setea un trx_id unico.
+      # Private: Setea un trx_id unico.
       #
       # Returns Token.
       def set_webpay_trx_id
         self.webpay_trx_id ||= generate_webpay_trx_id
       end
 
-      # Public: Genera el trx_id unico.
+      # Private: Genera el trx_id unico.
       #
       # Returns generated trx_id.
       def generate_webpay_trx_id

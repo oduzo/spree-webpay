@@ -11,7 +11,7 @@
   	<dd><%= @order.number %></dd>
 
     <dt>TBK_ID_SESION</dt>
-    <dd><%= Digest::MD5.hexdigest("#{@order.number}#{@order.payments.count}") %></dd>
+    <dd><%= params[:state] == 'confirm' ? @order.payments.valid.last.try(:webpay_trx_id) : @order.dummy_webpay_trx_id %></dd>
 
   	<dt>TBK_MONTO: </dt>
   	<dd><%= @order.webpay_amount %></dd>
@@ -22,4 +22,8 @@
   	<dt>TBK_URL_EXITO</dt>
   	<dd><%= webpay_success_url(:protocol => "http") %></dd>
   </dl>
+<% end %>
+
+<% if Rails.env.development? %>
+  <%= link_to 'MAKER', webpay_maker_path, class: 'btn btn-info btn-block', target: :blank %>
 <% end %>
