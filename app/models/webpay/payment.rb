@@ -124,7 +124,7 @@ module TBK
       private
 
       def update_spree_payment_status(payment, status)
-        payment.update_column(:accepted, status)
+        payment.update(accepted: status)
       end
 
       # Private: Checks if an order exists and is ready for payment.
