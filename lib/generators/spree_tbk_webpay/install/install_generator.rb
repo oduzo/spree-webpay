@@ -15,7 +15,12 @@ module SpreeTbkWebpay
               'protocol' => 'http',
               'cgi_base_url' => 'http://example.com/cgi-bin',
               'tbk_root_path' => '/home/deploy/cgi-bin-tbk'
-            }            
+            },
+            'test' => {
+              'protocol' => 'http',
+              'cgi_base_url' => 'http://example.com/cgi-bin',
+              'tbk_root_path' => '/home/deploy/cgi-bin-tbk'
+            }
           }
           settings.to_yaml
         end

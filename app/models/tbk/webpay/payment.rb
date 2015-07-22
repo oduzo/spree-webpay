@@ -76,17 +76,18 @@ module Tbk
           logger("Inicio", "") if @verbose
 
           @mac_string.chop!
-          unless Rails.env.development?
+          unless ["development", "test"].include?(Rails.env)
             File.open file_path, 'w+' do |file|
               file.write(@mac_string)
             end
           end
 
+          # Skip this validation if development or test
           logger("Check Mac", @mac_string) if @verbose
-          unless Rails.env.development?
-            check_mac = system(tbk_mac_path.to_s, file_path.to_s)
-          else
+          if ["development", "test"].include?(Rails.env)
             check_mac = true
+          else
+            check_mac = system(tbk_mac_path.to_s, file_path.to_s)
           end
 
           accepted = true
