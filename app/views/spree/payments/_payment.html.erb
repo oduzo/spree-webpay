@@ -12,7 +12,7 @@
   <span class="full-name"><%= source.name %></span>
 <% else %>
   <% if payment.webpay? && payment.webpay_params && payment.completed? %>
-    <dl>
+    <dl class="dl-horizontal">
       <dt><%= Spree.t("webpay_name_store") %></dt>
       <dd><%= @order.store.name rescue Spree::Store.default.name %></dd>
 
