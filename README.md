@@ -14,16 +14,18 @@ This extension was created for multi-domain spree
 * Follow the Transbank Webpay Integration manual to configure and set permissions to the directory tree and files.
 * Serve your CGI scripts in your Web server
 
+`NOTE:` If you need process payment asynchronously, you need to define a queue named `webpay`
+
 ## Usage
 
 Set CGI URL and root path in config/tbk-webpay.yml
 
     production:
       cgi_base_url: "http://example.com/cgi"
-      tbk_root_path: "/home/deploy/example.com/cgi"
+      tbk_root_path: "/home/deploy/example.com/cgi"      
     staging:
       cgi_base_url: "http://staging.example.com/cgi"
-      tbk_root_path: "/home/deploy/staging.example.com/cgi"
+      tbk_root_path: "/home/deploy/staging.example.comi"
 
 
 ## Installation
