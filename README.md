@@ -34,7 +34,7 @@ Set CGI URL and root path in config/tbk-webpay.yml
 Add spree_tbk_webpay to your Gemfile:
 
 ```ruby
-gem 'spree_tbk_webpay'
+gem 'spree_tbk_webpay', git: 'git@gitlab.acid.cl:iverdejo/spree-tbk-webpay.git', branch: '3-0-stable'
 ```
 
 Bundle your dependencies and run the installation generator:
