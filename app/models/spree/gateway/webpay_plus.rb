@@ -3,6 +3,7 @@ module Spree
   # Gateway for Transbank Webpay Hosted Payment Pages solution
   class Gateway::WebpayPlus < Gateway
     preference :store_code, :string
+    preference :verbose   , :boolean
 
     def self.STATE
       'webpay'
