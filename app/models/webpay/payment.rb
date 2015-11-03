@@ -63,19 +63,19 @@ module TBK
       # Returns a string redered as text.
       def confirmation params
         payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
-        file_path = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
-        tbk_mac_path = "#{config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
-        mac_string = ""
-
-        params.except(:controller, :action, :current_store_id).each do |key, value|
-          mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
-        end
 
         @order = Spree::Order.find_by(number: params[:TBK_ORDEN_COMPRA])
         @order.reload
 
-        @verbose = payment.payment_method.preferred_verbose
+        file_path    = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
+        tbk_mac_path = "#{config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
 
+        mac_string = ""
+        params.except(:controller, :action, :current_store_id).each do |key, value|
+          mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
+        end
+
+        @verbose = payment.payment_method.preferred_verbose
         @logfile = "#{Time.now.to_date.to_s.underscore}_webpay"
 
         begin
@@ -84,57 +84,60 @@ module TBK
           # Nothing for now
         end
 
-        logger("Inicio", "") if @verbose
+        if params[:TBK_RESPUESTA] == "0"
 
-        mac_string.chop!
-        File.open file_path, 'w+' do |file|
-            file.write(mac_string)
-        end
+          logger("Inicio", "") if @verbose
 
-        logger("Check Mac", mac_string) if @verbose
-
-        check_mac = system(tbk_mac_path.to_s, file_path.to_s)
-
-        accepted = true
-        unless check_mac
-          accepted = false
-
-          if @verbose
-            logger("file_path: ".concat(file_path)      , "")
-            logger("tbk_mac_path: ".concat(tbk_mac_path), "")
-            logger("mac_string: ".concat(mac_string)    , "")
-            logger("Failed check mac"                   , "")
+          mac_string.chop!
+          File.open file_path, 'w+' do |file|
+              file.write(mac_string)
           end
-        end
 
-        # the confirmation is invalid if @order is unknown
-        accepted = false if not order_exists?
+          logger("Check Mac", mac_string) if @verbose
+          check_mac = system(tbk_mac_path.to_s, file_path.to_s)
 
-        # double payment
-        accepted = false if order_paid?
+          accepted = true
+          unless check_mac
+            accepted = false
 
-        # wrong amount
-        accepted = false if not order_right_amount?(params[:TBK_MONTO])
-
-        update_spree_payment_status(payment, accepted)
-
-        if accepted
-          if params[:TBK_COD_RESP_M001] == "0"
-            unless ['failed', 'invalid'].include?(payment.state)
-              logger("Valid", ":)") if @verbose
-              WebpayWorker.perform_async(payment.id, "accepted")
+            if @verbose
+              logger("file_path: ".concat(file_path)      , "")
+              logger("tbk_mac_path: ".concat(tbk_mac_path), "")
+              logger("mac_string: ".concat(mac_string)    , "")
+              logger("Failed check mac"                   , "")
             end
           end
-          logger("Completed", ":)") if @verbose
-          return "ACEPTADO"
-        else
-          logger("Invalid", ":(") if @verbose
-          unless ['completed', 'failed', 'invalid'].include?(payment.state)
-            WebpayWorker.perform_async(payment.id, "rejected")
+
+          # the confirmation is invalid if @order is unknown
+          accepted = false if not order_exists?
+
+          # double payment
+          accepted = false if order_paid?
+
+          # wrong amount
+          accepted = false if not order_right_amount?(params[:TBK_MONTO])
+
+          update_spree_payment_status(payment, accepted)
+
+          if accepted and !['failed', 'invalid'].include?(payment.state)
+            logger("Valid", ":)") if @verbose
+            WebpayWorker.perform_async(payment.id, "accepted")
+
+            logger("Completed", ":)") if @verbose
+            return "ACEPTADO"
+          else
+            logger("Invalid", ":(") if @verbose
+            unless ['completed', 'failed', 'invalid'].include?(payment.state)
+              WebpayWorker.perform_async(payment.id, "rejected")
+            end
+
+            logger("Rejected", ":(") if @verbose
+            return "RECHAZADO"
           end
 
-          logger("Rejected", ":(") if @verbose
-          return "RECHAZADO"
+        else  # TBK_RESPUESTA != 0
+          logger("TBK_RESPUESTA != 0", params[:TBK_RESPUESTA]) if @verbose
+          return "ACEPTADO"
         end
       end
 
