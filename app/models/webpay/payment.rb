@@ -66,6 +66,7 @@ module TBK
         file_path = "#{config.tbk_webpay_tbk_root_path}/log/MAC01Normal#{params[:TBK_ID_SESION]}.txt"
         tbk_mac_path = "#{config.tbk_webpay_tbk_root_path}/tbk_check_mac.cgi"
         mac_string = ""
+
         params.except(:controller, :action, :current_store_id).each do |key, value|
           mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
         end
@@ -106,23 +107,14 @@ module TBK
           end
         end
 
-        # the confirmation is invalid if order_id is unknown
-        if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
-          accepted = false
-          logger.info "Invalid order_id" if @verbose
-        end
+        # the confirmation is invalid if @order is unknown
+        accepted = false if not order_exists?
 
         # double payment
-        if order_paid? params[:TBK_ORDEN_COMPRA]
-          accepted = false
-          logger.info "Double Payment Order #{params[:TBK_ORDEN_COMPRA]}" if @verbose
-        end
+        accepted = false if order_paid?
 
         # wrong amount
-        if not order_right_amount? params[:TBK_ORDEN_COMPRA], params[:TBK_MONTO]
-          accepted = false
-          Rails.logger.info "Wrong amount"
-        end
+        accepted = false if not order_right_amount?(params[:TBK_MONTO])
 
         update_spree_payment_status(payment, accepted)
 
@@ -148,7 +140,7 @@ module TBK
 
       private
 
-      def update_spree_payment_status(payment, status)
+      def update_spree_payment_status(payment)
         payment.update(accepted: status)
       end
 
@@ -157,13 +149,10 @@ module TBK
       # order_id - integer - The purchase order id.
       #
       # Returns a boolean indicating if the order exists and is ready for payment.
-      def order_exists?(order_id, session_id)
-        order = Spree::Order.find_by_number(order_id)
-        if order.blank?
-          return false
-        else
-          return true
-        end
+      def order_exists?
+        result = @order.is_a? Spree::Order
+        logger(__method__.to_s, result) if @verbose
+        result
       end
 
       # Private: Checks if an order is already paid.
@@ -171,9 +160,11 @@ module TBK
       # order_id - integer - The purchase order id.
       #
       # Returns a boolean indicating if the order is already paid.
-      def order_paid? order_id
-        order = Spree::Order.find_by_number(order_id)
-        return order.paid?
+      def order_paid?
+        return false unless @order
+        result = @order.paid? || @order.payments.completed.any?
+        logger(__method__.to_s, result) if @verbose
+        result
       end
 
       # Private: Checks if an order has the same amount given by Webpay.
@@ -182,13 +173,11 @@ module TBK
       # tbk_total_amount - The total amount of the purchase order given by Webpay.
       #
       # Returns a boolean indicating if the order has the same total amount given by Webpay.
-      def order_right_amount? order_id, tbk_total_amount
-        order = Spree::Order.find_by_number(order_id)
-        if order.blank?
-          return false
-        else
-          return order.webpay_amount == tbk_total_amount
-        end
+      def order_right_amount? tbk_total_amount
+        return false unless @order
+        result = @order.webpay_amount.to_i == tbk_total_amount.to_i
+        logger(__method__.to_s, result) if @verbose
+        result
       end
 
       def logger message, value
