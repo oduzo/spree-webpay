@@ -1,4 +1,5 @@
 require 'rest_client'
+require 'multi_logger'
 
 module TBK
   module Webpay
@@ -69,32 +70,52 @@ module TBK
           mac_string += "#{key}=#{value}&" if key != :controller or key != :action or key != :current_store_id
         end
 
+        @order = Spree::Order.find_by(number: params[:TBK_ORDEN_COMPRA])
+        @order.reload
+
+        @verbose = payment.payment_method.preferred_verbose
+
+        @logfile = "#{Time.now.to_date.to_s.underscore}_webpay"
+
+        begin
+          MultiLogger.add_logger("#{@logfile}") if @verbose
+        rescue
+          # Nothing for now
+        end
+
+        logger("Inicio", "") if @verbose
+
         mac_string.chop!
         File.open file_path, 'w+' do |file|
             file.write(mac_string)
         end
+
+        logger("Check Mac", mac_string) if @verbose
 
         check_mac = system(tbk_mac_path.to_s, file_path.to_s)
 
         accepted = true
         unless check_mac
           accepted = false
-          Rails.logger.info file_path
-          Rails.logger.info tbk_mac_path
-          Rails.logger.info mac_string
-          Rails.logger.info "Failed check mac"
+
+          if @verbose
+            logger("file_path: ".concat(file_path)      , "")
+            logger("tbk_mac_path: ".concat(tbk_mac_path), "")
+            logger("mac_string: ".concat(mac_string)    , "")
+            logger("Failed check mac"                   , "")
+          end
         end
 
         # the confirmation is invalid if order_id is unknown
         if not order_exists? params[:TBK_ORDEN_COMPRA], params[:TBK_ID_SESION]
           accepted = false
-          Rails.logger.info "Invalid order_id"
+          logger.info "Invalid order_id" if @verbose
         end
 
         # double payment
         if order_paid? params[:TBK_ORDEN_COMPRA]
           accepted = false
-          Rails.logger.info "Double Payment Order #{params[:TBK_ORDEN_COMPRA]}"
+          logger.info "Double Payment Order #{params[:TBK_ORDEN_COMPRA]}" if @verbose
         end
 
         # wrong amount
@@ -108,15 +129,19 @@ module TBK
         if accepted
           if params[:TBK_COD_RESP_M001] == "0"
             unless ['failed', 'invalid'].include?(payment.state)
+              logger("Valid", ":)") if @verbose
               WebpayWorker.perform_async(payment.id, "accepted")
             end
           end
+          logger("Completed", ":)") if @verbose
           return "ACEPTADO"
         else
+          logger("Invalid", ":(") if @verbose
           unless ['completed', 'failed', 'invalid'].include?(payment.state)
             WebpayWorker.perform_async(payment.id, "rejected")
           end
 
+          logger("Rejected", ":(") if @verbose
           return "RECHAZADO"
         end
       end
@@ -164,6 +189,10 @@ module TBK
         else
           return order.webpay_amount == tbk_total_amount
         end
+      end
+
+      def logger message, value
+        Rails.logger.send("#{@logfile}").info("[#{@order.number} #{@order.try(:state)}] #{message} #{value}")
       end
     end
   end
