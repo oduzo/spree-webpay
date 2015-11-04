@@ -143,7 +143,7 @@ module TBK
 
       private
 
-      def update_spree_payment_status(payment)
+      def update_spree_payment_status(payment, status)
         payment.update(accepted: status)
       end
 
