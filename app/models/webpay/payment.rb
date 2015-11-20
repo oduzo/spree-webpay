@@ -84,7 +84,7 @@ module TBK
           # Nothing for now
         end
 
-        if params[:TBK_RESPUESTA] == "0"
+        if params[:TBK_COD_RESP_M001] == "0"
 
           logger("Inicio", "") if @verbose
 
@@ -135,8 +135,8 @@ module TBK
             return "RECHAZADO"
           end
 
-        else  # TBK_RESPUESTA != 0
-          logger("TBK_RESPUESTA != 0", params[:TBK_RESPUESTA]) if @verbose
+        else  # TBK_COD_RESP_M001 != 0
+          logger("TBK_COD_RESP_M001 != 0", params[:TBK_COD_RESP_M001]) if @verbose
           return "ACEPTADO"
         end
       end
