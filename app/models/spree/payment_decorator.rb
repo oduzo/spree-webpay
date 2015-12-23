@@ -21,8 +21,12 @@ module Spree
         return "Cuotas Normales"
       when "SI"
         return "Sin Interés"
+      when "S2"
+        return "Dos Cuotas Sin Interés"
       when "CI"
         return "Cuotas Comercio"
+      when "NC"
+        return "Cuotas sin interés"
       when "VD"
         return "Débito"
       else
@@ -31,19 +35,10 @@ module Spree
     end
 
     def webpay_payment_type
-      case webpay_params["TBK_TIPO_PAGO"]
-      when "VN"
-        return "Crédito"
-      when "VC"
-        return "Crédito"
-      when "SI"
-        return "Crédito"
-      when "CI"
-        return "Crédito"
-      when "VD"
+      if webpay_params["TBK_TIPO_PAGO"] == 'VD'
         return "Redcompra"
       else
-        return webpay_params["TBK_TIPO_PAGO"]
+        return "Crédito"
       end
     end
 
