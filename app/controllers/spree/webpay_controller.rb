@@ -56,6 +56,7 @@ module Spree
       else
         if @order.completed? || @payment.accepted
           flash.notice = Spree.t(:order_processed_successfully)
+          flash['order_completed'] = true
           redirect_to completion_route and return
         else
           redirect_to webpay_failure_path(params) and return
