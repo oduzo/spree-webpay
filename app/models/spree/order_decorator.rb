@@ -50,7 +50,7 @@ module Spree
     # Return String instance
     def webpay_amount
       # TODO - Ver que pasa cuando hay decimales
-      (total * 100).to_i
+      (total.to_i * 100)
     end
 
     # ToDo - Esto deberia ser un helper
