@@ -7,7 +7,10 @@ module Spree
 
     # POST spree/webpay/confirmation
     def confirmation
+      Rails.logger.info("Starting confirmation of payment #{@payment.try(:id)}")
+
       if @payment.blank?
+        Rails.logger.info("Payment #{@payment.try(:id)} Rejected. Params: #{params}")
         render text: "RECHAZADO"
         return
       end
@@ -24,6 +27,8 @@ module Spree
 
     # GET/POST spree/webpay/success
     def success
+      Rails.logger.info("Starting success of payment #{@payment.try(:id)}")
+
       # To clean the Cart
       session[:order_id] = nil
       @current_order     = nil
@@ -46,7 +51,9 @@ module Spree
 
     # GET spree/webpay/failure
     def failure
-      @order = Spree::Order.find_by(number: params[:TBK_ORDEN_COMPRA])
+      payment = Spree::Payment.find_by(webpay_trx_id: params[:TBK_ID_SESION])
+      Rails.logger.info("Starting failure of payment #{payment.try(:id)}. Params: #{params}")
+      @order = payment.try(:order) || Spree::Order.find_by(number: params[:TBK_ORDEN_COMPRA])
     end
 
     private
