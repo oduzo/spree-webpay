@@ -35,10 +35,8 @@ module Spree
 
     def capture(money_cents, response_code, gateway_options)
       gateway_order_id   = gateway_options[:order_id]
-      order_number       = gateway_order_id.split('-').first
       payment_identifier = gateway_order_id.split('-').last
-      payment = Spree::Payment.find_by(number: payment_identifier)
-      order   = payment.order
+      payment = Spree::Payment.find_by(identifier: payment_identifier)
 
       if payment.webpay_params?
         if payment.webpay_params["TBK_RESPUESTA"] == "0"

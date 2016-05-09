@@ -44,7 +44,7 @@ module Tbk
         Rails.logger.info tbk_string_params
         Rails.logger.info '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<'
 
-        result = RestClient.post cgi_url, tbk_string_params
+        RestClient.post cgi_url, tbk_string_params
       end
 
       # Public: Confirmation callback executed from Webpay servers.
@@ -116,7 +116,7 @@ module Tbk
             @payment.update_column(:accepted, true)
 
             if @payment.payment_method.preferred_use_async
-              WebpayJob.perform_later(@payment.id, "accepted")
+              WebpayWorker.perform_async(@payment.id, "accepted")
             else
               @payment.capture!
               @payment.order.next!
@@ -130,7 +130,7 @@ module Tbk
               @payment.update_column(:accepted, false)
 
               if @payment.payment_method.preferred_use_async
-                WebpayJob.perform_later(@payment.id, "rejected")
+                WebpayWorker.perform_async(@payment.id, "rejected")
               else
                 @payment.started_processing!
                 @payment.failure!
