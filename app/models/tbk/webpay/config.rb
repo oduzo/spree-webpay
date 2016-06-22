@@ -3,7 +3,7 @@ require 'yaml'
 module Tbk
   module Webpay
     class Config
-      attr_accessor :config_filepath, :tbk_webpay_cgi_base_url, :tbk_webpay_tbk_root_path
+      attr_accessor :config_filepath, :tbk_webpay_cgi_base_url, :tbk_webpay_tbk_root_path, :protocol
 
       # Public: Loads the configuration file tbk-webpay.yml
       # If it's a rails application it will take the file from the config/ directory
