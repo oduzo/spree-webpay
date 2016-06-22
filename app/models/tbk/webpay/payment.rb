@@ -27,8 +27,8 @@ module Tbk
           'TBK_MONTO' => tbk_total_price,
           'TBK_ORDEN_COMPRA' => order_id,
           'TBK_ID_SESION' => session_id,
-          'TBK_URL_FRACASO' => failure_url,
-          'TBK_URL_EXITO' => success_url
+          'TBK_URL_FRACASO' => failure_url(:protocol => @config.protocol),
+          'TBK_URL_EXITO' => success_url(:protocol => @config.protocol)
         }
 
         cgi_url = "#{@config.tbk_webpay_cgi_base_url}/tbk_bp_pago.cgi"

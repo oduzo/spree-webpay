@@ -29,7 +29,7 @@
       <dd><%= @order.number %></dd>
 
       <dt><%= Spree.t("webpay_trx_date") %></dt>
-      <dd><%= @order.completed_at.to_s(:db) %></dd>
+      <dd><%= l(@order.completed_at, format: :long) %></dd>
 
       <dt><%= Spree.t("webpay_payment_type") %></dt>
       <dd><%= payment.webpay_payment_type %></dd>
