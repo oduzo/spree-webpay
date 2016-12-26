@@ -1,7 +1,7 @@
 <% if payment.respond_to?(:webpay_params) and payment.webpay_params %>
   <dl>
     <dt>Codigo Autorización:</dt>
-    <dd><%= payment.webpay_params['TBK_CODIGO_AUTORIZACION'] %></dd>
+    <dd><%= payment.webpay_params['TBK_COD_AUT_M001'] %></dd>
 
     <dt>ID Transacción:</dt>
     <dd><%= payment.webpay_params['TBK_ID_TRANSACCION'] %></dd>
