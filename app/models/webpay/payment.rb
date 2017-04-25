@@ -43,18 +43,12 @@ module TBK
       end
 
       def tbk_params_hash tbk_total_price, order_id, trx_id, result_url, failure_url
-        {
-          'TBK_TIPO_TRANSACCION' => 'TR_MALL',
-          'TBK_MONTO' => tbk_total_price,
-          'TBK_ORDEN_COMPRA' => order_id,
-          'TBK_ID_SESION' => trx_id,
-          'TBK_URL_RESULTADO' => result_url,
-          'TBK_URL_FRACASO' => failure_url,
-          'TBK_CODIGO_TIENDA_M001' => config.store_code,
-          'TBK_MONTO_TIENDA_M001' => tbk_total_price,
-          'TBK_ORDEN_TIENDA_M001' => order_id,
-          'TBK_NUM_TRX' => 1
-        }
+        order = Spree::Order.find_by number: order_id
+        if order.present? && order.try(:retiro_local?) && order.retiro_local?
+          tbk_params_hash_m2 tbk_total_price, order_id, trx_id, result_url, failure_url
+        else
+          tbk_params_hash_m1 tbk_total_price, order_id, trx_id, result_url, failure_url
+        end
       end
 
       # Public: Confirmation callback executed from Webpay servers.
@@ -181,6 +175,38 @@ module TBK
         result = @order.webpay_amount.to_i == tbk_total_amount.to_i
         logger(__method__.to_s, result) if @verbose
         result
+      end
+
+      # Temporal hardcode methods
+      # TODO: In backend administrate N store and send M00N as params name
+      def tbk_params_hash_m1 tbk_total_price, order_id, trx_id, result_url, failure_url
+        {
+          'TBK_TIPO_TRANSACCION' => 'TR_MALL',
+          'TBK_MONTO' => tbk_total_price,
+          'TBK_ORDEN_COMPRA' => order_id,
+          'TBK_ID_SESION' => trx_id,
+          'TBK_URL_RESULTADO' => result_url,
+          'TBK_URL_FRACASO' => failure_url,
+          'TBK_CODIGO_TIENDA_M001' => config.store_code,
+          'TBK_MONTO_TIENDA_M001' => tbk_total_price,
+          'TBK_ORDEN_TIENDA_M001' => order_id,
+          'TBK_NUM_TRX' => 1
+        }
+      end
+
+      def tbk_params_hash_m2 tbk_total_price, order_id, trx_id, result_url, failure_url
+        {
+          'TBK_TIPO_TRANSACCION' => 'TR_MALL',
+          'TBK_MONTO' => tbk_total_price,
+          'TBK_ORDEN_COMPRA' => order_id,
+          'TBK_ID_SESION' => trx_id,
+          'TBK_URL_RESULTADO' => result_url,
+          'TBK_URL_FRACASO' => failure_url,
+          'TBK_CODIGO_TIENDA_M002' => config.store_code,
+          'TBK_MONTO_TIENDA_M002' => tbk_total_price,
+          'TBK_ORDEN_TIENDA_M002' => order_id,
+          'TBK_NUM_TRX' => 1
+        }
       end
 
       def logger message, value
