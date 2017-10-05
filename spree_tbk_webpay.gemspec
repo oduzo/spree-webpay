@@ -30,5 +30,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sqlite3', '~> 1.0'
 
   s.add_runtime_dependency 'rest-client', '~> 1.6'
-  s.add_runtime_dependency 'sidekiq', '~> 3.0'
+  s.add_runtime_dependency 'sidekiq', '< 5'
 end
